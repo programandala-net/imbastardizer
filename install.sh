@@ -42,5 +42,6 @@ eval ${INSTALLCMD}src/vim/syntax/imbastardizer.vim $VIMDIR/syntax/
 eval ${INSTALLCMD}src/vim/syntax/msxbasic.vim $VIMDIR/syntax/
 
 eval ${INSTALLCMD}src/vim/imbastardizer.vim $VIMDIR/
+eval ${INSTALLCMD}src/vim/imbastardizer_version.vim $VIMDIR/
 
 eval ${INSTALLCMD}src/imbastardizer.sh $BINDIR/imbastardizer
