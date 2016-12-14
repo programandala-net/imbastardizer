@@ -10,9 +10,32 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-source "imbastardizer_version.vim"
+runtime imbastardizer_version.vim
 
 " ----------------------------------------------
+
+let b:enum=0
+
+function! Enum(...)
+
+  " Return the current value of 'b:enum' and increase it.
+  " If a parameter is given, store it into 'b:enum' first.
+  "
+  " This function is provided to enumerate constant values in `#vim`
+  " directives.
+  "
+  " Usage example:
+  "
+  "
+
+  if a:0 " Any parameter?
+    let b:enum=a:1 " Use the first parameter
+  endif
+  let l:output=b:enum
+  let b:enum=b:enum+1
+  return l:output
+
+endfunction
 
 function! Clean()
 
@@ -671,6 +694,8 @@ function! Run()
 
   " Config the auto-run line number.
 
+  " XXX TODO -- useful only for some dialects
+
   " The command '#run' can be used to set the desired line
   " number or label. Only the first occurence of '#run' will be
   " used; it can be anywhere in the source but always at the
@@ -975,7 +1000,9 @@ function! BasFile()
 
   silent update " Write the current source file if needed
   split " Split the window
-  let s:basFilename=expand('%:r').'.bas'
+  if empty(s:basFilename)
+    let s:basFilename=expand('%:r').'.bas'
+  endif
   try
   silent execute 'bd '.s:basFilename
   catch /E94:/
@@ -1039,7 +1066,7 @@ function! RestoreVariables()
   let &shortmess=s:shortmessBackup
 endfunction
 
-function! Imbastardizer()
+function! Imbastardizer(outputFile)
 
   " Convert the content of the current Vim buffer, a Imbastardizer source, to
   " its BASIC target equivalent.
@@ -1049,6 +1076,11 @@ function! Imbastardizer()
   " <~/.vim/ftplugins/imbastardizer.vim>), manually executed with ':call
   " Imbastardizer()' or called from the provided command line wrapper
   " <imbastardizer.sh>.
+
+  echo "output file = " a:outputFile
+  " XXX TMP --
+
+  let s:basFilename=a:outputFile
 
   call SaveVariables()
 
@@ -1070,7 +1102,7 @@ function! Imbastardizer()
   endif
 
   echo "\n"
-  echo 'Imbastardizer (version '.s:version.') by Marcos Cruz (programandala.net)'
+  echo 'Imbastardizer (version '.g:imbastardizer_version.') by Marcos Cruz (programandala.net)'
   echo "\n"
 
   " Conversion steps

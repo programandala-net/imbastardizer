@@ -13,6 +13,12 @@ elseif exists("b:current_syntax")
   finish
 endif
 
+if version > 600
+  setlocal iskeyword=48-57,65-90,97-122,_,$,#
+else
+  set iskeyword=48-57,65-90,97-122,_,$,#
+endif
+
 let s:cpo_save = &cpo
 set cpo&vim
 
@@ -196,7 +202,7 @@ syn match   gwbasicSpecial contained "\\\d\d\d\|\\."
 syn region  gwbasicString		  start=+"+  skip=+\\\\\|\\"+  end=+"+  contains=basicSpecial
 
 syn region  gwbasicComment	start="REM" end="$" contains=basicTodo
-syn region  gwbasicComment	start="^[ \t]*'" end="$" contains=basicTodo
+syn region  gwbasicComment	start="'" end="$" contains=basicTodo
 syn region  gwbasicLineNumber	start="^\d" end="\s"
 syn match   gwbasicTypeSpecifier  "[a-zA-Z0-9][\$%&!#]"ms=s+1
 " Used with OPEN statement
