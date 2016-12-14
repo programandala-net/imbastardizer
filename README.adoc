@@ -1,0 +1,41 @@
+= Imbastardizer
+:author: Marcos Cruz
+:revdate: 2016-12-14
+
+== Description
+
+A BASIC preprocessor written in VimL, to make development in old
+versions of BASIC easier.
+
+== Planned target BASIC dialects
+
+- GW-BASIC (DOS)
+- MSX BASIC (MSX)
+- Sinclair BASIC  (ZX Spectrum)
+- SAM BASIC (SAM Coupé)
+- MasterBASIC (SAM Coupé)
+- Beta BASIC (ZX Spectrum)
+- S*BASIC (QL)
+
+== Ancestors
+
+Imbastardizer is intended as a replacement for previous tools that
+were developed only for one specific dialect of BASIC:
+
+- http://programandala.net/es.programa.bbim.html[BBim]
+- http://programandala.net/en.program.mbim.html[MBim]
+- http://programandala.net/es.programa.sbim.html[SBim]
+- http://programandala.net/en.program.vimclair_basic.html[Vimclair
+  BASIC]
+
+== Planned features
+
+- Modular design
+- The target BASIC dialect can be selected in the BASIC source
+- The source converter is separated from the media maker
+- Simple method to add new target BASIC dialects
+
+== Status
+
+The project was started in 2016-12.  It's under development, not
+usable yet.
