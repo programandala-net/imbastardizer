@@ -4,8 +4,11 @@
 
 == Description
 
-A BASIC preprocessor written in VimL, to make development in old
-versions of BASIC easier.
+Imbastardizer is a BASIC preprocessor written in VimL.
+
+== Goal
+
+Easier cross-development in old dialects of BASIC.
 
 == Planned target BASIC dialects
 
@@ -19,14 +22,14 @@ versions of BASIC easier.
 
 == Ancestors
 
-Imbastardizer is intended as a replacement for previous tools that
-were developed only for one specific dialect of BASIC:
+Imbastardizer is an improved replacement for previous tools that were
+developed only for one specific dialect of BASIC:
 
-- http://programandala.net/es.programa.bbim.html[BBim]
-- http://programandala.net/en.program.mbim.html[MBim]
-- http://programandala.net/es.programa.sbim.html[SBim]
+- http://programandala.net/es.programa.bbim.html[BBim] for Beta BASIC
+- http://programandala.net/en.program.mbim.html[MBim] for MasterBASIC
+- http://programandala.net/es.programa.sbim.html[SBim] for S*BASIC
 - http://programandala.net/en.program.vimclair_basic.html[Vimclair
-  BASIC]
+  BASIC] for Sinclair BASIC
 
 == Planned features
 

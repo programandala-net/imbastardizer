@@ -1,15 +1,15 @@
-" ~/.vim/ftplugin/msximbasic.vim
+" ~/.vim/ftplugin/imbastardizer.vim
 
-" Vim filetype plugin for MSX-imBASIC
+" Vim filetype plugin for Imbastardizer
 
 " By Marcos Cruz (programandala.net)
 
-" This file is part of MSX-imBASIC
-" http://programandala.net/en.program.msx-imbasic.html
+" This file is part of Imbastardizer
+" http://programandala.net
 
 " Change history
 "
-" 2016-10-30: Start, adapted from <~/.vim/ftplugin/vimclair_basic.vim>.
+" 2016-12-14: Start, adapted from <~/.vim/ftplugin/imbastardizer.vim>.
 
 setlocal tabstop=2
 setlocal softtabstop=0
@@ -30,10 +30,8 @@ setlocal formatoptions=cqorj
 " comments:
 setlocal commentstring=#\ %s
 
-" The key sequence '.tap' in normal mode
-" runs the vbas2tap converter:
+" The key sequence '.tap' in normal mode runs the converter:
 
-runtime msximbas2.vim
-nmap <silent> .dsk :call MSXimbas2dsk()<CR>
-nmap <silent> .bas :call MSXimbas2bas()<CR>
+runtime imbastardizer.vim
+nmap <silent> .bas :call Imbastardizer()<CR>
 
