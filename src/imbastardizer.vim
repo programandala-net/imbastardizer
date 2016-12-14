@@ -1,74 +1,20 @@
-" vbas2tap.vim
+" imbastardizer.vim
 
-" vbas2tap
-let s:version='0.12.0+201611051115'
+let s:version='0.1.0+201612140214'
 
-" This file is part of Vimclair BASIC
-" http://programandala.net/en.program.vimclair_basic.html
+" This file is part of Imbastardizer
+" http://programandala.net/
 
-" This file converts a Vimclair BASIC source to a TAP file
-
-" --------------------------------------------------------------
-" Author and license
-
-" Copyright (C) 2014,2015,2016 Marcos Cruz (programandala.net)
+" Copyright (C) 2016 Marcos Cruz (programandala.net)
 
 " You may do whatever you want with this work, so long as you retain
 " the copyright/authorship/acknowledgment/credit notice(s) and this
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" --------------------------------------------------------------
-" Description
+" ----------------------------------------------
 
-" vbas2tap converts a Vimclair BASIC source file
-" to Sinclair BASIC in a TAP file.
-
-" More details in the <README.md> file and
-" <http://programandala.net/en.program.vimclair_basic.html>.
-
-" --------------------------------------------------------------
-" Requirements
-
-" In order to convert the sources to a TAP file, this program
-" needs either BAS2TAP or zmakebas (the '#tapmaker' directive is
-" used to choose one of them; if the '#tapmarke' directive is
-" empty or missing, no TAP will be created, but only the BAS
-" file).
-
-" ..............................................
-" BAS2TAP (by Martijn van der Heide)
-
-" At the time of writing (2015-03), its latest version (v2.4,
-" release 2005-07-24), can be obtained from the utilities
-" section of World of Spectrum
-" (http://www.worldofspectrum.org/); or you can try
-" <ftp://ftp.worldofspectrum.org/pub/sinclair/tools/pc>.
-
-" This is how I compiled and installed BAS2TAP on
-" Raspbian and Debian:
-
-"    gcc -Wall -O2 bas2tap.c -o bas2tap -lm
-"    strip bas2tap
-"    sudo mv bas2tap /usr/local/bin/
-
-" ..............................................
-" zmakebas (by Russel Marks)
-
-" At the time of writing (2015-03), its latest version (1.2,
-" release 2004) is a package of Debian, Raspbian, Ubuntu and
-" probably other distros.  Also the sources are easy to find
-" (example: https://github.com/catseye/zmakebas).
-"
-" The original code had a bug: The tokenization of `DEF FN`
-" doesn't include the required 5 bytes for each parameter. This
-" made `FN` fail. This bug was fixed by Antonio Villena in his
-" own version:
-" <http://sourceforge.net/p/emuscriptoria/code/HEAD/tree/desprot/ZMakeBas.c>.
-
-" --------------------------------------------------------------
-
-function! VimclairClean()
+function! Clean()
 
   " Clean the source code.
 
@@ -91,27 +37,26 @@ function! VimclairClean()
 
   echo 'Source code cleaned'
 
-  call VimclairSaveStep('clean')
+  call SaveStep('clean')
 
 endfunction
 
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Control structures
 
-function! VimclairControlStructures()
+function! ControlStructures()
 
-  call VimclairDoLoop()
-  call VimclairExitFor()
-  call VimclairIfEndif()
-  call VimclairProcedures()
+  call DoLoop()
+  call ExitFor()
+  call IfEndif()
 
 endfunction
 
-function! VimclairDoLoop()
+function! DoLoop()
 
   " Convert all 'DO LOOP' structures.
 
-  " The Vimclair BASIC 'DO LOOP' structures are copied from Andy Wright's Beta
+  " The  BASIC 'DO LOOP' structures are copied from Andy Wright's Beta
   " BASIC, SAM BASIC and MasterBASIC: they allow 'UNTIL' and 'WHILE' in any
   " combination (there are nine possible combinations).
 
@@ -123,7 +68,7 @@ function! VimclairDoLoop()
     " first DO found
     "echo '  XXX DO found!'
     let s:doLineNumber=line('.') " line number of the DO statement
-    call VimclairDo()
+    call Do()
     let l:unclosedLoops=1 " counter
     while search('^\(do\|loop\)\>','W')
       " DO or LOOP found
@@ -136,7 +81,7 @@ function! VimclairDoLoop()
         " LOOP
         let l:unclosedLoops=l:unclosedLoops-1
         if l:unclosedLoops==0
-          call VimclairLoop()
+          call Loop()
           break
         endif
       endif
@@ -147,13 +92,13 @@ function! VimclairDoLoop()
     call cursor(s:doLineNumber,'$')
   endwhile
 
-  call VimclairExitDo()
+  call ExitDo()
 
-  call VimclairSaveStep('do_loop')
+  call SaveStep('do_loop')
 
 endfunction
 
-function! VimclairDo()
+function! Do()
 
   " Open a 'DO LOOP' structure.
 
@@ -168,7 +113,7 @@ function! VimclairDo()
   " a label is enough.  If it's 'DO UNTIL' or 'DO WHILE', a conditional jump
   " has to be inserted, but the destination line is unknown until the
   " correspondent 'LOOP' is found.  Therefore the code is stored into
-  " 's:doStatement' in order to create it later ('VimclairLoop()' does it),
+  " 's:doStatement' in order to create it later ('Loop()' does it),
   " with the line number added.
 
   " Save the original line:
@@ -195,7 +140,7 @@ function! VimclairDo()
 
 endfunction
 
-function! VimclairLoop()
+function! Loop()
 
   " Close a 'DO LOOP' structure.
 
@@ -226,7 +171,7 @@ function! VimclairLoop()
 
 endfunction
 
-function! VimclairExitDo()
+function! ExitDo()
 
   " Convert 'EXIT DO'.
 
@@ -251,7 +196,7 @@ function! VimclairExitDo()
 
 endfunction
 
-function! VimclairExitFor()
+function! ExitFor()
 
   " Convert 'EXIT FOR'.
 
@@ -275,22 +220,22 @@ function! VimclairExitFor()
     endif
   endwhile
 
-  call VimclairSaveStep('exit_for')
+  call SaveStep('exit_for')
 
 endfunction
 
-function! VimclairIfEndif()
+function! IfEndif()
 
   " Convert all 'IF ENDIF' structures.
 
-  " XXX TODO finish
+  " XXX TODO finish -- adapt to BASIC dialects that provide `ELSE`
 
-  " The Vimclair BASIC's 'IF ENDIF' structures are inspired by Andy Wright's
+  " The Imbastardizer's 'IF ENDIF' structures are inspired by Andy Wright's
   " Beta BASIC, SAM BASIC and MasterBASIC, but they are not identical.
 
   " Syntax:
 
-  " Short 'IF' structures are the same than Sinclair BASIC's.
+  " Short 'IF' structures:
 
   "   IF condition THEN action
 
@@ -352,7 +297,7 @@ function! VimclairIfEndif()
             call append(line('.')-1,'goto '.l:endifLabel)
             " Make the previous condition jump here when false:
             let l:elseIfLabel='@elseIf'.l:ifLineNumber.'_'.line('.')
-            let l:newIf='if '.VimclairNot(l:condition).' then goto '.l:elseIfLabel
+            let l:newIf='if '.Not(l:condition).' then goto '.l:elseIfLabel
             call setline(l:conditionLineNumber,l:newIf)
             call append(line('.')-1,l:elseIfLabel)
             " Keep the current condition:
@@ -374,7 +319,7 @@ function! VimclairIfEndif()
             let l:elseLineNumber=line('.')
             " Make the previous condition jump here when false:
             let l:elseLabel='@else'.l:ifLineNumber
-            let l:newIf='if '.VimclairNot(l:condition).' then goto '.l:elseLabel
+            let l:newIf='if '.Not(l:condition).' then goto '.l:elseLabel
             call setline(l:conditionLineNumber,l:newIf)
             call setline('.',l:elseLabel)
             " Keep the current condition:
@@ -390,7 +335,7 @@ function! VimclairIfEndif()
         if l:unclosedConditionals==0 " current IF structure?
           call setline('.',l:endifLabel)
           if len(l:condition) " is there an unresolved condition?
-            let l:newIf='if '.VimclairNot(l:condition).' then goto '.l:endifLabel
+            let l:newIf='if '.Not(l:condition).' then goto '.l:endifLabel
             call setline(l:conditionLineNumber,l:newIf)
           endif
           break
@@ -405,11 +350,11 @@ function! VimclairIfEndif()
     call cursor(l:ifLineNumber,'$')
   endwhile
 
-  call VimclairSaveStep('if_endif')
+  call SaveStep('if_endif')
 
 endfunction
 
-function! VimclairNot(expression)
+function! Not(expression)
 
   " Return the opposite of the given expression.
   " If the expression already has a 'NOT' at the start, just remove it;
@@ -419,17 +364,17 @@ function! VimclairNot(expression)
   let l:expression=substitute(l:expression,'^\s*\(.\{-}\)\s*$','\1','')
   " XXX Somehow, '\>' does not work in the following pattern, so
   " '[ (]' is used instead:
-  if match(l:expression,'^not[ (]')==0
-    let l:expression=substitute(l:expression,'^not\s*\(.\{-}\)$','\1','')
-    let l:expression=VimclairWithoutParens(l:expression)
+  if match(l:expression,'=0$')==(len(l:expression)-2)
+    let l:expression=strpart(l:expression,0,len(l:expression)-2)
+    let l:expression=WithoutParens(l:expression)
   else
-    let l:expression='not('.l:expression.')'
+    let l:expression=l:expression.'=0'
   endif
   return l:expression
 
 endfunction
 
-function! VimclairWithoutParens(expression)
+function! WithoutParens(expression)
 
   " Remove the outside parens from the given expression.
 
@@ -442,62 +387,10 @@ function! VimclairWithoutParens(expression)
 
 endfunction
 
-function! VimclairProcedures()
-
-  " Convert DEF PROC, END PROC and EXIT PROC.
-
-  " Syntax:
-
-  " 'DEF PROC' and 'END PROC' must be the only statements of the line.  The
-  " space is optional: 'DEFPROC', 'ENDPROC' and 'EXITPROC' are valid.  'EXIT
-  " PROC' must be at the end of the line.  'CALL' must be used to call a
-  " procedure, but it can be changed to anything (e.g. 'PROC', or even an
-  " empty string) with the '#procedureCall' directive.
-
-  " Description:
-
-  " Procedures are simulated with ordinary routines. No parameters are allowed.
-  " Procedures with parameters can be simulated with the '#vim' directive.
-
-  let s:doStatement=''
-
-  call cursor(1,1)
-  while search('^def\s\?proc\>','Wc')
-    "echo '  XXX DEF PROC found at line '.line('.').': '.getline('.')
-    let l:procLineNumber=line('.')
-    let l:procLine=getline('.')
-    let l:procNamePos=matchend(l:procLine,'^def\s\?proc\s\+')
-    let l:procName=strpart(l:procLine,l:procNamePos)
-    if len(l:procName)==0
-      echoerr 'DEF PROC without name at line '.l:procLineNumber
-    else
-      " XXX FIXME some procs are not converted
-      "echo '  XXX valid proc name: '.l:procName
-      let l:procLabel='@proc_'.l:procName
-      "echo '  XXX proc label: '.l:procLabel
-      call setline(l:procLineNumber,l:procLabel)
-      call cursor(l:procLineNumber,'^')
-      "echo '  XXX #procedureCall: <'.s:procedureCall.'>'
-      if len(s:procedureCall)
-        execute 'silent! %substitute,\<'.s:procedureCall.'\s\+'.l:procName.'\>,gosub '.l:procLabel.',gei'
-      else
-        execute 'silent! %substitute,\<'.l:procName.'\>,gosub '.l:procLabel.',gei'
-      endif
-    endif
-    call cursor(l:procLineNumber,'$')
-  endwhile
-
-  silent! %substitute,\<exit\s\?proc$,return,ei
-  silent! %substitute,^end\s\?proc$,return,ei
-
-  call VimclairSaveStep('procedures')
-
-endfunction
-
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Metacommands
 
-function! VimclairDoVim(directive)
+function! DoVim(directive)
 
   " Search for '#vim' or '#previm' directives, depending on the argument,
   " and execute their Vim commands.
@@ -542,17 +435,17 @@ function! VimclairDoVim(directive)
 
   endif
 
-  call VimclairSaveStep(strpart(a:directive,1).'_directives')
+  call SaveStep(strpart(a:directive,1).'_directives')
 
 endfunction
 
-function! VimclairVim()
+function! Vim()
 
   " Search for all '#previm' and '#vim' directives and execute
   " their Vim commands.
 
-  call VimclairDoVim('#previm')
-  call VimclairDoVim('#vim')
+  call DoVim('#previm')
+  call DoVim('#vim')
 
   " Remove the empty lines (this is not done also after
   " executing the '#previm' directives , in order to help
@@ -563,7 +456,7 @@ function! VimclairVim()
 
 endfunction
 
-function! VimclairInclude()
+function! Include()
 
   " Execute all '#include' directives.
 
@@ -591,11 +484,11 @@ function! VimclairInclude()
     echo l:includedFiles 'files included'
   endif
 
-  call VimclairSaveStep('included_files')
+  call SaveStep('included_files')
 
 endfunction
 
-function! VimclairConditionalConversion()
+function! ConditionalConversion()
 
   " Parse and interpret all conditional conversion directives.
 
@@ -632,7 +525,7 @@ function! VimclairConditionalConversion()
           echoerr '#ifdef structures can not be nested'
           break
         else
-          call VimclairIfdef()
+          call Ifdef()
           let l:unresolvedCondition=1
         endif
       elseif l:currentLine=~'^\s*#ifndef\s\+.\+'
@@ -642,7 +535,7 @@ function! VimclairConditionalConversion()
           echoerr '#ifndef structures can not be nested'
           break
         else
-          call VimclairIfdef()
+          call Ifdef()
           let l:unresolvedCondition=1
         endif
 "      elseif l:currentLine=~'^\s*#elseifdef\s\+.\+'
@@ -691,11 +584,11 @@ function! VimclairConditionalConversion()
   endwhile
 
   echo 'Conditional conversion done'
-  call VimclairSaveStep('conditional_conversion')
+  call SaveStep('conditional_conversion')
 
 endfunction
 
-function! VimclairIfdef()
+function! Ifdef()
 
     let l:ifLineNumber=line('.')
     let l:tagPos=matchend(getline('.'),'^\s*#if\(n\)\?def\s\+')
@@ -703,7 +596,7 @@ function! VimclairIfdef()
 "    echo 'XXX l:tag='.l:tag
     let l:tagMustBeDefined=(getline('.')=~'^\s*#ifdef')
 "    echo 'XXX l:tagMustBeDefined='.l:tagMustBeDefined
-    let l:tagIsDefined=VimclairDefined(l:tag)
+    let l:tagIsDefined=Defined(l:tag)
 "    echo 'XXX l:tagIsDefined='.l:tagIsDefined
     let s:keepSource=(l:tagMustBeDefined && l:tagIsDefined) || (!l:tagMustBeDefined && !l:tagIsDefined)
 "    echo 'XXX s:keepSource='.s:keepSource
@@ -711,35 +604,31 @@ function! VimclairIfdef()
 
 endfunction
 
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Config commands
 
-function! VimclairConfig()
+function! Config()
 
   " Search and parse the config directives.  They can be anywhere in the source
   " but always at the start of a line (with optional indentation).
 
   " #renumLine <line number>
-  call VimclairRenumLine()
+  call RenumLine()
   " #procedureCall <keyword>
-  call VimclairProcedureCall()
+  call ProcedureCall()
   " #run <label or line number>
-  call VimclairRun()
+  call Run()
   " #define <tag>
-  call VimclairDefine()
-  " #filename <filename>
-  call VimclairZXFilename()
-  " #tapmaker <program>
-  call VimclairTAPMaker()
+  call Define()
 
-  call VimclairSaveStep('config_values')
+  call SaveStep('config_values')
 
 endfunction
 
-function! VimclairRenumLine()
+function! RenumLine()
 
-  " Store into 's:renumLine' the first line number to be used by the final
-  " Sinclair BASIC program.  The command '#renumLine' can be used to set the
+  " Store into 's:renumLine' the first line number to be used by the 
+  " target BASIC program.  The command '#renumLine' can be used to set the
   " desired line number. Only the first occurence of '#renumLine' will be
   " used; it can be anywhere in the source but always at the start of a line
   " (with optional indentation).
@@ -757,13 +646,13 @@ function! VimclairRenumLine()
 
 endfunction
 
-function! VimclairProcedureCall()
+function! ProcedureCall()
 
-  " Store into 's:procedureCall' the command used in the source by the
-  " Sinclair BASIC program.  The command '#procedureCall' can be used to set
-  " the desired line number. Only the first occurence of '#procedureCall' will
-  " be used; it can be anywhere in the source but always at the start of a
-  " line (with optional indentation).
+  " Store into 's:procedureCall' the command used in the source by the target
+  " BASIC program.  The command '#procedureCall' can be used to set the
+  " desired line number. Only the first occurence of '#procedureCall' will be
+  " used; it can be anywhere in the source but always at the start of a line
+  " (with optional indentation).
 
   let s:procedureCall='call' " default value
 
@@ -778,7 +667,7 @@ function! VimclairProcedureCall()
 
 endfunction
 
-function! VimclairRun()
+function! Run()
 
   " Config the auto-run line number.
 
@@ -800,7 +689,7 @@ function! VimclairRun()
 endfunction
 
 " XXX OLD
-" function! VimclairRunLabel()
+" function! RunLabel()
 
 "   " Config the auto-run line number.
 
@@ -820,7 +709,7 @@ endfunction
 
 " endfunction
 
-function! VimclairDefine()
+function! Define()
 
   " Search and execute all '#define' directives.
 
@@ -847,11 +736,11 @@ function! VimclairDefine()
     echo l:tags.' #define directives'
   endif
 
-  call VimclairSaveStep('defined_tags')
+  call SaveStep('defined_tags')
 
 endfunction
 
-function! VimclairDefined(needle)
+function! Defined(needle)
 
   " Is needle a defined tag?
 
@@ -868,69 +757,10 @@ function! VimclairDefined(needle)
 
 endfunction
 
-function! VimclairZXFilename()
-
-  " Set the filename used inside the TAP file.  Its default value is the
-  " name of the Vimclair BASIC source file, but without the filename
-  " extension.
-
-  " The '#filename' directive can be used to set the desired filename. Only the
-  " first occurence of '#filename' will be used; it can be anywhere in the
-  " source but always at the start of a line (with optional indentation).
-
-  " XXX FIXME check valid filenames
-
-  " Default ZX Spectrum filename: source filename without extension:
-  let s:zxFilename=fnamemodify(expand('%'),':t:r')
-
-  call cursor(1,1) " Go to the top of the file.
-  if search('^\s*#filename\>','Wc')
-    let l:valuePos=matchend(getline('.'),'^#filename\s*')
-    let s:zxFilename=strpart(getline('.'),l:valuePos)
-    call setline('.','')
-  endif
-
-  let s:zxFilename=strpart(s:zxFilename,0,10) " max length: 10 chars
-  echo 'ZX Spectrum filename: '.s:zxFilename
-
-endfunction
-
-function! VimclairTAPMaker()
-
-  " Set the BAS to TAP converter.
-
-  " The '#tapmaker' directive can be used to set the desired
-  " filename. Only the first occurence of '#tapmaker' will be
-  " used; it can be anywhere in the source but always at the
-  " start of a line (with optional indentation).
-
-  let s:tapmaker=''
-
-  call cursor(1,1) " Go to the top of the file.
-  if search('^\s*#tapmaker\>','Wc')
-    let l:valuePos=matchend(getline('.'),'^#tapmaker\s*')
-    let s:tapmaker=strpart(getline('.'),l:valuePos)
-    call setline('.','')
-  endif
-
-  let s:validTAPMaker=(match(['bas2tap','zmakebas'],s:tapmaker)!=-1)
-  if empty(s:tapmaker)
-    echo 'No BAS to TAP converter specified'
-    echo 'No TAP file will be created'
-  elseif s:validTAPMaker
-    echo 'BAS to TAP converter: '.s:tapmaker
-  else
-    echo 'Unknown BAS to TAP converter specified: '.s:tapmaker
-    echo 'No TAP file will be created'
-    let s:tapmaker=''
-  endif
-
-endfunction
-
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Labels and line numbers
 
-function! VimclairLabels()
+function! Labels()
 
   " Sintax:
 
@@ -947,10 +777,14 @@ function! VimclairLabels()
   let l:ignoreCaseBackup=&ignorecase
   set ignorecase
 
-  " Join every lonely label to its following line
-  " (unless its following line has another label definition):
-  silent %substitute,^\(@[0-9a-zA-Z_]\+\)\s*:\?\n\([^@]\),\1:\2,ei
-  call VimclairSaveStep('labels_joined')
+  " Join every label to its following line:
+
+  call cursor(1,1)
+  while search('^\(@[0-9a-zA-Z_]\+\s\?\)\+$','Wce')
+    join
+  endwhile
+
+  call SaveStep('labels_joined_to_following_line')
 
   " Create an empty dictionary to store the line numbers of the labels;
   " the labels will be used as keys:
@@ -959,61 +793,60 @@ function! VimclairLabels()
   " Go to the top of the file:
   call cursor(1,1)
 
-  " Search for label definitions and store them into the dictionary:
-  while search('^@[0-9a-zA-Z_]\+\>','W')
+    " Search for label definitions and store them into the dictionary:
+  while search('^@[0-9a-zA-Z_]\+\>','w')
 
     " Store the found label into register 'l':
-    normal "l2yw
+    normal "l2dw
     " XXX INFORMER
 "    echo 'Raw label found: <' . getreg('l',1) . '>'
 "    let l:label=tolower(getreg('l',1))
-    let l:label=getreg('l',1)
+    let l:label=Trim(getreg('l',1))
     let l:labelValue=line('.')+s:renumLine-1
     " XXX INFORMER
     "echo '  XXX Clean label: <' . l:label . '> = '.l:labelValue
     " Use the label as the key to its line number:
     let l:lineNumber[l:label]=l:labelValue
-    " Go to the next word:
-    normal w
   endwhile
 
   " Remove all label definitions:
   silent! %substitute/^@[0-9a-zA-Z_]\+\s*:\?\s*//ei
 
-  call VimclairSaveStep('label_definitions_removed')
+  call SaveStep('label_definitions_removed')
 
   " Substitute every label reference with its line number:
   for l:label in keys(l:lineNumber)
-    "echo 'About to search for label ' l:label
+
+    " XXX INFORMER
+    "echo 'About to search for label '.l:label.', whose line number is '.l:lineNumber[l:label]
+    "call input('Press ENTER to continue')
+
     call cursor(1,1) " Go to the top of the file.
     " Do the subtitution:
     while search(l:label.'\>','Wc')
-      " XXX INFORMER
-"      echo l:label "label reference found"
-"      echo 'About to translate it to ' l:lineNumber[l:label]
-"      execute 'silent! substitute/'.l:label.'\>/'.l:lineNumber[l:label].'/ei'
-      execute 'substitute/'.l:label.'\>/'.l:lineNumber[l:label].'/i'
+
+      if 0
+        " XXX INFORMER
+        echo l:label "label reference found in line" line('.') ":"
+        echo getline('.')
+        echo 'About to translate it to ' l:lineNumber[l:label]
+        call input('Press ENTER to continue')
+        execute 'substitute/'.l:label.'\>/'.l:lineNumber[l:label].'/i'
+      else
+        execute 'silent! substitute/'.l:label.'\>/'.l:lineNumber[l:label].'/ei'
+      endif
     endwhile
   endfor
-
-  let s:runLine=0 " default: no auto-run
-  if has_key(l:lineNumber,s:run)
-    " it's a label
-    let s:runLine=l:lineNumber[s:run]
-  else
-    " it's a line number
-    let s:runLine=s:run
-  endif
 
   let &ignorecase=l:ignoreCaseBackup
 
   echo 'Labels translated'
 
-  call VimclairSaveStep('labels_translated')
+  call SaveStep('labels_translated')
 
 endfunction
 
-function! VimclairRenum()
+function! Renum()
 
   " Call the nl program (part of the Debian coreutils package):
   execute "silent! %!nl --body-numbering=t --number-format=rn --number-width=5 --number-separator=' ' --starting-line-number=".s:renumLine." --line-increment=1 --body-numbering=a"
@@ -1035,209 +868,104 @@ function! VimclairRenum()
 
   echo 'Line numbers added'
 
-  call VimclairSaveStep('line_numbers')
+  call SaveStep('line_numbers')
 
 endfunction
 
-" --------------------------------------------------------------
-" Token conversion
-
-function! VimclairTokens()
-
-  " Modify some tokens to the format required by BAS2TAP.
-
-  if s:tapmaker=='bas2tap'
-
-    silent! %s@\<gosub\>@go sub@ge
-    silent! %s@\<goto\>@go to@ge
-    silent! %s@\<deffn\>@def fn@ge
-
-  endif
-
-  " Note: The step is saved even if nothing was done,
-  " in order to preserve the numbers of the step files
-  call VimclairSaveStep('tokens_with_inner_space')
-
-endfunction
-
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Character conversion
 
-function! VimclairBASinChars2BAS2TAP()
+function! SpecialChars()
 
-  " Convert characters from BASin format to BAS2TAP format
+  " Convert Special characters
+  " from the UTF-8 source to the target BASIC charset
 
-  " Block graphics (chars 128-143)
-
-  silent! %s@\\  @{80}@ge
-  silent! %s@\\ '@{81}@ge
-  silent! %s@\\' @{82}@ge
-  silent! %s@\\''@{83}@ge
-  silent! %s@\\ \.@{84}@ge
-  silent! %s@\\ :@{85}@ge
-  silent! %s@\\'\.@{86}@ge
-  silent! %s@\\':@{87}@ge
-  silent! %s@\\\. @{88}@ge
-  silent! %s@\\\.'@{89}@ge
-  silent! %s@\\: @{8A}@ge
-  silent! %s@\\:'@{8B}@ge
-  silent! %s@\\\.\.@{8C}@ge
-  silent! %s@\\\.:@{8D}@ge
-  silent! %s@\\:\.@{8E}@ge
-  silent! %s@\\::@{8F}@ge
-
-  " UDG (chars 144-164)
-
-  silent! %s@\\[Aa]@{A}@ge
-  silent! %s@\\[Bb]@{B}@ge
-  silent! %s@\\[Cc]@{C}@ge
-  silent! %s@\\[Dd]@{D}@ge
-  silent! %s@\\[Ee]@{E}@ge
-  silent! %s@\\[Ff]@{F}@ge
-  silent! %s@\\[Gg]@{G}@ge
-  silent! %s@\\[Hh]@{H}@ge
-  silent! %s@\\[Ii]@{I}@ge
-  silent! %s@\\[Jj]@{J}@ge
-  silent! %s@\\[Kk]@{K}@ge
-  silent! %s@\\[Ll]@{L}@ge
-  silent! %s@\\[Mm]@{M}@ge
-  silent! %s@\\[Nn]@{N}@ge
-  silent! %s@\\[Oo]@{O}@ge
-  silent! %s@\\[Pp]@{P}@ge
-  silent! %s@\\[Qq]@{Q}@ge
-  silent! %s@\\[Rr]@{R}@ge
-  silent! %s@\\[Ss]@{S}@ge
-  silent! %s@\\[Tt]@{T}@ge
-  silent! %s@\\[Uu]@{U}@ge
-
-  " Embedded attributes
-  " Note: combined chars (e.g. "\{p7i2b0}") are not converted
-
-  silent! %s@\\{vn}@{INVERSE 0}@ge
-  silent! %s@\\{vi}@{INVERSE 1}@ge
-  silent! %s@\\{f\([01]\)}@{FLASH \1}@ge
-  silent! %s@\\{b\([01]\)}@{BRIGHT \1}@ge
-  silent! %s@\\{p\([0-9]\)}@{PAPER \1}@ge
-  silent! %s@\\{i\([0-9]\)}@{INK \1}@ge
-
-  " Embedded chars
-
-  silent! %s/\\#\(\d\+\)/\=nr2char(submatch(1))/g
-
-endfunction
-
-function! VimclairBASinChars2zmakebas()
-
-  " Convert BASin characters to zmakebas
-
-  " zmakebas already supports the BASin notation for UDG and
-  " block graphics characters
-
-  " Embedded attributes:
-  " Note: combined chars (e.g. "\{p7i2b0}") are not converted
-
-  silent! %s@\\{vn}@\\{20}\\{0}@ge
-  silent! %s@\\{vi}@\\{20}\\{1}@ge
-  silent! %s@\\{f\([01]\)}@\\{18}\\{\1}@ge
-  silent! %s@\\{b\([01]\)}@\\{19}\\{\1}@ge
-  silent! %s@\\{p\([0-9]\)}@\\{17}\\{\1}@ge
-  silent! %s@\\{i\([0-9]\)}@\\{16}\\{\1}@ge
-
-  " Embedded chars:
-
-  silent! %s@\\#\(\d\+\)@\\{\1}@g
-
-endfunction
-
-function! VimclairBASinChars()
-
-  " Convert BASin characters
-  " to the format of the selected TAP maker
+  " XXX TODO -- leave this to the Makefile of the BASIC project, using `iconv`
 
   let l:ignoreCaseBackup=&ignorecase
   set noignorecase
 
-  if s:tapmaker=='zmakebas'
-    call VimclairBASinChars2zmakebas()
-    echo 'Special chars converted to zmakebas format'
-  elseif s:tapmaker=='bas2tap'
-    call VimclairBASinChars2BAS2TAP()
-    echo 'Special chars converted to BAS2TAP format'
-  endif
+  " Embedded chars
+  " XXX TODO -- make this optional, with a directive
+  silent! %s/\\#\(\d\+\)/\=nr2char(submatch(1))/g
 
-  call VimclairSaveStep('special_chars_converted')
+  echo 'Special chars converted'
+
+  call SaveStep('special_chars_converted')
 
   let &ignorecase=l:ignoreCaseBackup
 
 endfunction
 
-function! VimclairByte2Char(byte)
+function! Byte2Char(byte)
 
   " Convert the given byte to a string
   " in the format of the selected TAP maker.
 
-  if s:tapmaker=='zmakebas'
+  " XXX TODO -- adapt
+  " XXX TODO -- make this optional, with a directive
+
+  if 0 " s:tapmaker=='zmakebas'
     return '\{'.a:byte.'}'
 
-  elseif s:tapmaker=='bas2tap'
+  elseif 0 " s:tapmaker=='bas2tap'
     return '{'.strpart(printf('%04x',a:byte),2,2).'}'
 
   endif
 
 endfunction
 
-function! VimclairAddress2Chars(number)
+function! Address2Chars(number)
 
   " Convert the given 16-bit number to a string of two bytes
   " in the format of the selected TAP maker.
 
-  echo 'VimclairAddress2Chars(' a:number ')'
+  " XXX TODO -- adapt
+
+  echo 'Address2Chars(' a:number ')'
   if a:number>65535
     " XXX TODO better
     echoerr 'Invalid 16-bit number: ' a:number
   else
     let l:highByte=a:number/256
     let l:lowByte=a:number-256*l:highByte
-    return VimclairByte2Char(l:lowByte).VimclairByte2Char(l:highByte)
+    return Byte2Char(l:lowByte).Byte2Char(l:highByte)
   endif
 
 endfunction
 
-function! VimclairAddresses2Chars()
+function! Addresses2Chars()
 
   " Convert 16-bit embedded values into two embedded bytes
   " with the format of the selected TAP maker.
   "
-  " Vimclair BASIC uses double curly brackets for 16-bit
+  " Imbastardizer uses double curly brackets for 16-bit
   " embedded values, in decimal or hex. Example:
   "
   "   let a$="{{0xFFFF}}{{2048}}"
 
-  %substitute@{{\([0-9]\{-}\)}}@\=VimclairAddress2Chars(submatch(1))@ge
-  %substitute@{{0x\([0-9A-Fa-f]\{-}\)}}@\=VimclairAddress2Chars(str2nr(submatch(1),16))@ge
+  " XXX TODO -- adapt
+
+  %substitute@{{\([0-9]\{-}\)}}@\=Address2Chars(submatch(1))@ge
+  %substitute@{{0x\([0-9A-Fa-f]\{-}\)}}@\=Address2Chars(str2nr(submatch(1),16))@ge
 
 endfunction
 
-function! VimclairChars()
+function! Chars()
 
   " Convert all special chars
 
-  " XXX TODO convert also the BAS2TAP notation to zmakebas
-  " XXX TODO convert also the zmakebas notation to BAS2TAP
-
-  if !empty(s:tapmaker)
-    call VimclairAddresses2Chars()
-    call VimclairBASinChars()
-  endif
+  call Addresses2Chars()
+  call SpecialChars()
 
 endfunction
 
-" --------------------------------------------------------------
+" ----------------------------------------------
 " BAS file
 
-function! VimclairBasFile()
+function! BasFile()
 
-  " Create a copy of the current Vimclair BASIC file
+  " Create a copy of the current source file
   " with the .bas extension added
   " and open it for editing.
 
@@ -1245,7 +973,7 @@ function! VimclairBasFile()
   " XXX OLD
 "  silent cd %:h
 
-  silent update " Write the current Vimclair BASIC file if needed
+  silent update " Write the current source file if needed
   split " Split the window
   let s:basFilename=expand('%:r').'.bas'
   try
@@ -1259,89 +987,7 @@ function! VimclairBasFile()
 
 endfunction
 
-function! VimclairTapFileWithBAS2TAP()
-
-  " Convert the final BAS file to a TAP file, using BAS2TAP.
-
-  "   BAS2TAP v2.4 by Martijn van der Heide of ThunderWare Research Center
-  "
-  "   Usage: BAS2TAP [-q] [-w] [-e] [-c] [-aX] [-sX] FileIn [FileOut]
-  "          -q = quiet: no banner, no progress indication
-  "          -w = suppress generation of warnings
-  "          -e = write errors to stdout in stead of stderr channel
-  "          -c = case independant tokens (be careful here!)
-  "          -n = disable syntax checking
-  "          -a = set auto-start line in BASIC header
-  "          -s = set "filename" in BASIC header
-
-  " XXX TODO check if bas2tap is installed
-  " XXX TODO config with more directives?
-
-  let s:autorun=s:runLine ? ' -a'.s:runLine : ''
-  silent! execute '!bas2tap -c -n'.s:autorun.' -s'.s:zxFilename.' '.s:basFilename.' '.s:tapFilename
-
-endfunction
-
-function! VimclairTapFileWithZmakebas()
-
-  " Convert the final BAS file to a TAP file, using zmakebas.
-
-  " zmakebas 1.2 (by Russell Marks, 2004-05)
-  "
-  " Synopsis:
-  "
-  " zmakebas [-hlr] [-a startline] [-i incr] [-n speccy_filename]
-  "          [-o output_file] [-s line] [input_file]
-  "
-  " Options:
-  "
-  " -a : make the generated file auto-start from line startline.
-  "      If `-l' was specified, this can be a label, but don't forget
-  "      to include the initial `@' to point this out.
-  "
-  " -h : give help on command line options.
-  "
-  " -i : in labels mode, set line number increment (default 2).
-  "
-  " -l : use labels rather than line numbers.
-  "
-  " -n : specify filename to use in .TAP file (up to 10 chars),
-  "      i.e.  the filename the speccy will see.  Default is a blank
-  "      filename (10 spaces).
-  "
-  " -o : output to output_file rather than the default `out.tap'.
-  "      Use `-' as the filename to output on std out.
-  "
-  " -r : write a raw headerless Basic file, rather than the
-  "      default .TAP file.
-  "
-  " -s : in labels mode, set starting line number (default 10).
-
-  " XXX TODO check if zmakebas is installed
-  " XXX TODO config with more directives?
-
-  let s:autorun=s:runLine ? ' -a '.s:runLine : ''
-  silent! execute '!zmakebas '.s:autorun.' -n '.s:zxFilename.' -o 's:tapFilename.' '.s:basFilename
-
-endfunction
-
-function! VimclairTapFile()
-
-  " Convert the final BAS file to a TAP file.
-
-  if s:validTAPMaker
-    let s:tapFilename=expand('%:r').'.tap'
-    echo "\n"
-    if s:tapmaker=='zmakebas'
-      call VimclairTapFileWithZmakebas()
-    elseif s:tapmaker=='bas2tap'
-      call VimclairTapFileWithBAS2TAP()
-    endif
-  endif
-
-endfunction
-
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Generic functions
 
 function! Trim(input_string)
@@ -1351,7 +997,7 @@ function! Trim(input_string)
   return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
 endfunction
 
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Debug
 
 function! XXX(message)
@@ -1361,7 +1007,7 @@ function! XXX(message)
   endif
 endfunction
 
-function! VimclairSaveStep(description)
+function! SaveStep(description)
 
   " Save the current version of the file being converted,
   " into the directory hold in the s:stepsDir variable,
@@ -1376,26 +1022,35 @@ function! VimclairSaveStep(description)
 
 endfunction
 
-" --------------------------------------------------------------
+" ----------------------------------------------
 " Main
 
-function! Vbas2tap()
-
-  " Convert the content of the current Vim buffer, a Vimclair
-  " BASIC source, to a TAP file with its Sinclair BASIC
-  " equivalent.
-  "
-  " This is the entry function of the converter, the function
-  " that has to be called by Vim key mappings (as defined in
-  " <~/.vim/ftplugins/vimclairbasic.vim>), manually executed
-  " with ':call Vbas2tap()' or called from the provided command
-  " line wrapper <vbas2tap.sh>.
-
+function! SaveVariables()
   " Save variables that will be changed
   let s:shortmessBackup=&shortmess
   set shortmess=at
   let s:ignoreCaseBackup=&ignorecase
   set ignorecase
+endfunction
+
+function! RestoreVariables()
+  " Restore the variables that were changed
+  let &ignorecase=s:ignoreCaseBackup
+  let &shortmess=s:shortmessBackup
+endfunction
+
+function! Imbastardizer()
+
+  " Convert the content of the current Vim buffer, a Imbastardizer source, to
+  " its BASIC target equivalent.
+  "
+  " This is an entry function of the converter. This function can be called
+  " using a Vim key mapping (as defined in
+  " <~/.vim/ftplugins/imbastardizer.vim>), manually executed with ':call
+  " Imbastardizer()' or called from the provided command line wrapper
+  " <imbastardizer.sh>.
+
+  call SaveVariables()
 
   " Counter for the saved step files
   let s:step=0
@@ -1407,7 +1062,7 @@ function! Vbas2tap()
   let s:sourceFileDir=fnamemodify(expand('%'),':p:h')
 
   " Absolute directory to save the conversion steps into
-  let s:stepsDir=s:sourceFileDir.'/vbas2tap_steps/'
+  let s:stepsDir=s:sourceFileDir.'/imbastardizer_steps/'
   if !isdirectory(s:stepsDir)
     " XXX TODO if exists("*mkdir")
     " XXX TODO catch possible errors
@@ -1415,21 +1070,20 @@ function! Vbas2tap()
   endif
 
   echo "\n"
-  echo 'vbas2tap (version '.s:version.') by Marcos Cruz (programandala.net)'
+  echo 'Imbastardizer (version '.s:version.') by Marcos Cruz (programandala.net)'
   echo "\n"
 
   " Conversion steps
-  call VimclairBasFile()
-  call VimclairInclude()
-  call VimclairConfig()
-  call VimclairConditionalConversion()
-  call VimclairClean()
-  call VimclairVim()
-  call VimclairControlStructures()
-  call VimclairLabels()
-  call VimclairRenum()
-  call VimclairChars()
-  call VimclairTokens()
+  call BasFile()
+  call Include()
+  call Config()
+  call ConditionalConversion()
+  call Clean()
+  call Vim()
+  call ControlStructures()
+  call Labels()
+  call Renum()
+  call Chars()
 
   " Remove the empty lines
   silent! %s/\n$//e
@@ -1439,13 +1093,9 @@ function! Vbas2tap()
   silent bw
   echo 'BAS file saved and closed'
 
-  " Create the TAP file
-  call VimclairTapFile()
-
-  " Restore the variables that were changed
-  let &ignorecase=s:ignoreCaseBackup
-  let &shortmess=s:shortmessBackup
+  call RestoreVariables()
 
 endfunction
 
-" vim:tw=64:ts=2:sts=2:sw=2:et
+  " vim:tw=64:ts=2:sts=2:sw=2:et
+

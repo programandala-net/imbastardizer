@@ -1,10 +1,9 @@
-= Vimclair BASIC To-Do List
+= Imbastardizer To-Do List
 :author: Marcos Cruz (programandala.net)
-:revdate: 2016-11-05
+:revdate: 2016-12-14
 
 This file is part of
-http://programandala.net/en.program.vimclair_basic.html[Vimclair
-BASIC], by Marcos Cruz (programandala.net).
+http://programandala.net/[Imbastardizer], by Marcos Cruz (programandala.net).
 
 == To fix
 
@@ -48,3 +47,4 @@ BASIC], by Marcos Cruz (programandala.net).
 - Export the labels as Vimclair BASIC `#vim` directives, in order to
   reuse them in related programs.
 - Write an installer.
+
