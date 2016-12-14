@@ -33,7 +33,7 @@
 
 # ##############################################################
 
-. ./CONFIG.sh
+. ./config.sh
 
 eval ${INSTALLCMD}src/vim/imbastardizer.vim $VIMDIR/
 eval ${INSTALLCMD}src/vim/ftdetect/imbastardizer.vim $VIMDIR/ftdetect/
