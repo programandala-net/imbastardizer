@@ -35,8 +35,8 @@
 
 . ./CONFIG.sh
 
-eval ${INSTALLCMD}imbastardizer.vim $VIMDIR/imbastardizer.vim
-eval ${INSTALLCMD}ftdetect/imbastardizer.vim $VIMDIR/ftdetect/imbastardizer.vim
-eval ${INSTALLCMD}ftplugin/imbastardizer.vim $VIMDIR/ftplugin/imbastardizer.vim
+eval ${INSTALLCMD}src/vim/imbastardizer.vim $VIMDIR/
+eval ${INSTALLCMD}src/vim/ftdetect/imbastardizer.vim $VIMDIR/ftdetect/
+eval ${INSTALLCMD}src/vim/ftplugin/imbastardizer.vim $VIMDIR/ftplugin/
 
-eval ${INSTALLCMD}imbastardizer.sh $BINDIR/imbastardizer
+eval ${INSTALLCMD}src/imbastardizer.sh $BINDIR/imbastardizer

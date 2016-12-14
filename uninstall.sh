@@ -38,3 +38,4 @@
 rm -f $VIMDIR/imbastardizer.vim
 rm -f $VIMDIR/ftdetect/imbastardizer.vim
 rm -f $VIMDIR/ftplugin/imbastardizer.vim
+rm -f $BINDIR/imbastardizer

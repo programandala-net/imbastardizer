@@ -46,9 +46,9 @@ BINDIR=~/bin
 
 # Create symbolic links:
 
-INSTALLCMD="ln -s -f $(pwd)/"
+#INSTALLCMD="ln -s -f $(pwd)/"
 
 # Copy the files:
 
-#INSTALLCMD="cp -f -p "
+INSTALLCMD="cp -f -p "
 
