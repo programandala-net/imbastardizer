@@ -13,7 +13,7 @@
 # ##############################################################
 # Usage
 
-#   imbastardizer.sh filename.imbas
+#   imbastardizer.sh infile [outfile]
 
 # ##############################################################
 # History
@@ -31,10 +31,10 @@
 # ##############################################################
 # Error checking
 
-if [ "$#" -ne 1 ] ; then
+if [ "$#" -gt 2 -o "$#" -eq 0 ] ; then
   echo "Convert an Imbastardizer source file to a target BASIC source"
   echo 'Usage:'
-  echo "  ${0##*/} sourcefile"
+  echo "  ${0##*/} infile [outfile]"
   exit 1
 fi
 
@@ -71,7 +71,11 @@ fi
 # -S = Vim file to be sourced after the first file has been read.
 # -c = Vim command to be executed after the first file has been read.
 
-vim -e -n -S ~/.vim/imbastardizer.vim -c "call Imbastardizer() | q!" $1
+vim -E -n -S ~/.vim/imbastardizer.vim -c "call Imbastardizer('$2') | qall!" $1
+
+# XXX FIXME -- Why Vim always return an exit code? This makes Makefile
+# fail:
+echo "Vim exit code: $?"
 exit $?
 
 # vim:tw=78:ts=2:sts=2:et:

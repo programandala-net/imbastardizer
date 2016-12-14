@@ -42,7 +42,7 @@ BINDIR=~/bin
 
 # Create hard links:
 
-#INSTALLCMD="ln -f "
+INSTALLCMD="ln -f "
 
 # Create symbolic links:
 
@@ -50,5 +50,5 @@ BINDIR=~/bin
 
 # Copy the files:
 
-INSTALLCMD="cp -f -p "
+# INSTALLCMD="cp -f -p "
 
