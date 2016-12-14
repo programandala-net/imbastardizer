@@ -35,8 +35,12 @@
 
 . ./config.sh
 
-eval ${INSTALLCMD}src/vim/imbastardizer.vim $VIMDIR/
 eval ${INSTALLCMD}src/vim/ftdetect/imbastardizer.vim $VIMDIR/ftdetect/
 eval ${INSTALLCMD}src/vim/ftplugin/imbastardizer.vim $VIMDIR/ftplugin/
+eval ${INSTALLCMD}src/vim/syntax/gwbasic.vim $VIMDIR/syntax/
+eval ${INSTALLCMD}src/vim/syntax/imbastardizer.vim $VIMDIR/syntax/
+eval ${INSTALLCMD}src/vim/syntax/msxbasic.vim $VIMDIR/syntax/
+
+eval ${INSTALLCMD}src/vim/imbastardizer.vim $VIMDIR/
 
 eval ${INSTALLCMD}src/imbastardizer.sh $BINDIR/imbastardizer
