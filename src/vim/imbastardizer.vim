@@ -1,7 +1,5 @@
 " imbastardizer.vim
 
-let s:version='0.1.0+201612140214'
-
 " This file is part of Imbastardizer
 " http://programandala.net/
 
@@ -11,6 +9,8 @@ let s:version='0.1.0+201612140214'
 " the copyright/authorship/acknowledgment/credit notice(s) and this
 " license in all redistributed copies and derived works.  There is no
 " warranty.
+
+source "imbastardizer_version.vim"
 
 " ----------------------------------------------
 

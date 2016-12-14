@@ -36,6 +36,7 @@
 . ./config.sh
 
 rm -f $VIMDIR/imbastardizer.vim
+rm -f $VIMDIR/imbastardizer_version.vim
 rm -f $VIMDIR/ftdetect/imbastardizer.vim
 rm -f $VIMDIR/ftplugin/imbastardizer.vim
 rm -f $VIMDIR/syntax/gwbasic.vim
