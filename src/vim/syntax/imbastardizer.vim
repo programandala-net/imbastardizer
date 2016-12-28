@@ -4,7 +4,7 @@
 " Author:      Marcos Cruz (programandala.net)
 " License:     Vim license (GPL compatible)
 " URL:         http://programandala.net/
-" Updated:     2016-12-14
+" Updated:     2016-12-28
 
 " -------------------------------------------------------------
 " Change history: see at the end of the file
@@ -92,7 +92,7 @@ syn keyword imbasKeyword COLOR
 syn keyword imbasKeyword CONT
 syn keyword imbasKeyword COPY
 syn keyword imbasKeyword COS
-syn keyword imbasKeyword CRSLIN
+syn keyword imbasKeyword CSRLIN
 syn keyword imbasKeyword CSAVE
 syn keyword imbasKeyword CSNG
 syn keyword imbasKeyword CVD
@@ -336,3 +336,5 @@ let b:current_syntax = "imbastardizer"
 " Change history
 
 " 2016-12-14: First version (based on vimclairbasic.vim and imbas, by the same author).
+"
+" 2016-12-28: Fix `csrlin`.

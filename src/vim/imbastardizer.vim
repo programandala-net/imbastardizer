@@ -10,6 +10,8 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
+" Last modified 201612281958
+
 runtime imbastardizer_version.vim
 
 " ----------------------------------------------
@@ -174,6 +176,7 @@ function! Loop()
     execute 'substitute,^loop\s\+while\s\+\(.\+\)$,if \1 then '.l:jump.',i'
   elseif match(l:loopLine,'^loop\s\+until\>')>-1
     execute 'substitute,^loop\s\+until\s\+\(.\+\)$,if not (\1) then '.l:jump.',i'
+    " XXX TODO -- use `not(x)` or `(x)=0` depending on the target; use `function! Not()`.
   elseif match(l:loopLine,'^loop$')>-1
     execute 'substitute,^loop$,'.l:jump.',i'
   else
@@ -492,7 +495,9 @@ function! Include()
   let l:includedFiles=0 " Counter
   while search('^\s*#include\s\+','Wc')
     let l:includedFiles += 1
-    let l:filename=matchstr(getline('.'),'\S\+.*',8)
+    let l:include=getline('.')
+    let l:filenamePos=matchend(l:include,'^\s*#include\s\+')
+    let l:filename=strpart(l:include,l:filenamePos)
     call setline('.','// <<< start of included file '.l:filename)
     call append('.','// >>> end of included file '.l:filename)
     let l:filecontent=readfile(s:sourceFileDir.'/'.l:filename)
