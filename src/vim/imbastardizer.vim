@@ -749,9 +749,9 @@ function! Define()
   let s:definedTags=[] " a list for the '#define' tags
 
   call cursor(1,1) " Go to the top of the file.
-  while search('^\s*#define\>','Wc')
+  while search('^\s*#define\s\+','Wc')
     let l:definition=getline('.')
-    let l:tagPos=matchend(l:definition,'^\s*#define\s*')
+    let l:tagPos=matchend(l:definition,'^\s*#define\s\+')
     let l:tag=strpart(l:definition,l:tagPos)
     if !empty(l:tag)
       call add(s:definedTags,l:tag)
