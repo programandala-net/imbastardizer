@@ -10,7 +10,7 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201612281958
+" Last modified 201612291533
 
 runtime imbastardizer_version.vim
 
@@ -229,13 +229,16 @@ function! ExitFor()
   " 'EXIT FOR' and its correspondent 'NEXT' must be at the end of the line.
   " The form 'EXITFOR' is allowed.
 
+  " XXX TODO -- make this dependent on the current target
+
   let s:doStatement=''
 
   call cursor(1,1)
   while search('\<exit\s\?for$','Wc')
     "echo '  XXX EXIT FOR found at line '.line('.').': '.getline('.')
     let l:exitForLineNumber=line('.')
-    if search('\<next [a-z]\>','W')
+    " if search('\<next [a-z]\>','W') " XXX OLD for Sinclair BASIC
+    if search('\<next [a-z]\+[%!#]\?\>','W') " XXX NEW for GW-BASIC
       "echo '  XXX NEXT found at line '.line('.').': '.getline('.')
       let l:exitLabel='@forExit'.line('.')
       call append(line('.'),l:exitLabel)
