@@ -3,4 +3,4 @@
 " This file is part of Imbastardizer
 " http://programandala.net/
 
-let g:imbastardizer_version='0.2.2+201612282003'
+let g:imbastardizer_version='0.2.3+201612291533'
