@@ -1,11 +1,11 @@
 = Imbastardizer To-Do List
 :author: Marcos Cruz (programandala.net)
-:revdate: 2016-12-14
+:revdate: 2017-02-04
 
 This file is part of
 http://programandala.net/[Imbastardizer], by Marcos Cruz (programandala.net).
 
-== To fix
+== Fix
 
 - Chained jumps created by the control structures.
 - Check duplicated labels.
@@ -20,7 +20,7 @@ http://programandala.net/[Imbastardizer], by Marcos Cruz (programandala.net).
 - When '#filename X' is not at the left margin, the datum stored
   is part of "#filename".
 
-== To improve
+== Improve
 
 - Make `silent` configurable in #vim substitutions.
 - Error message if `#include` file is not found.
@@ -36,7 +36,7 @@ http://programandala.net/[Imbastardizer], by Marcos Cruz (programandala.net).
 - Errors should be returned as exit status, in order to make
   things easier for 'make' and other tools. But how?
 
-== To implement
+== Implement
 
 - Hex numbers.
 - Configuration file?
@@ -47,4 +47,6 @@ http://programandala.net/[Imbastardizer], by Marcos Cruz (programandala.net).
 - Export the labels as Vimclair BASIC `#vim` directives, in order to
   reuse them in related programs.
 - Write an installer.
+- 2016-12-29: Modular support for targets: one configuration file for
+  target.
 
