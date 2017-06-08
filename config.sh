@@ -1,30 +1,20 @@
 # config.sh 
 
-# This file is part of Imbastardizer
-# http://programandala.net
-
-# ##############################################################
-# Author and license
-
-# Copyright (C) 2016 Marcos Cruz (programandala.net)
-
-# You may do whatever you want with this work, so long as you
-# retain the copyright notice(s) and this license in all
-# redistributed copies and derived works. There is no warranty.
-
-# ##############################################################
-# Description
+# By Marcos Cruz (programandala.net), 2016, 2017.
 
 # This program configures the installation of Imbastardizer.
-#
 # Change it to suit your system.
 
-# ##############################################################
-# History
+# This file is part of Imbastardizer
+# http://programandala.net/en.program.imbastardizer.html
+
+# ==============================================================
+# Change log
 
 # 2016-12-14: First version.
+# 2017-06-08: Update header.
 
-# ##############################################################
+# ==============================================================
 # Installation directories
 
 # Current user installation:
@@ -37,7 +27,7 @@ BINDIR=~/bin
 #VIMDIR=/usr/share/vim/vimcurrent/
 #BINDIR=/usr/local/bin
 
-# ##############################################################
+# ==============================================================
 # Intallation command
 
 # Create hard links:

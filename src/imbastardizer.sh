@@ -2,25 +2,26 @@
 
 # imbastardizer.sh
 
+# By Marcos Cruz (programandala.net), 2016, 2017.
+
 # Command line wrapper for
 # ~/.vim/plugins/imbastardizer.vim
 
-# By Marcos Cruz (programandala.net)
-
 # This file is part of Imbastardizer
-# http://programandala.net
+# http://programandala.net/en.program.imbastardizer.html
 
-# ##############################################################
+# ==============================================================
 # Usage
 
 #   imbastardizer.sh infile [outfile]
 
-# ##############################################################
-# History
+# ==============================================================
+# Change log
 
 # 2016-12-14: Start.
+# 2017-06-08: Update header.
 
-# ##############################################################
+# ==============================================================
 # To-do
 
 # Options for all the converter's config, and also:
@@ -28,7 +29,7 @@
 #
 # Use ':runtime' command instead of '-S' option.
 
-# ##############################################################
+# ==============================================================
 # Error checking
 
 if [ "$#" -gt 2 -o "$#" -eq 0 ] ; then
@@ -58,7 +59,7 @@ if [ ! -s "$1"  ] ; then
   exit 1
 fi
 
-# ##############################################################
+# ==============================================================
 # Main
 
 # Vim options used:

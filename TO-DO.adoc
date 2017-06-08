@@ -1,9 +1,10 @@
 = Imbastardizer To-Do List
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-02-04
+:revdate: 2017-06-08
 
 This file is part of
-http://programandala.net/[Imbastardizer], by Marcos Cruz (programandala.net).
+http://programandala.net/en.program.imbastardizer.html[Imbastardizer],
+by Marcos Cruz (programandala.net).
 
 == Fix
 
