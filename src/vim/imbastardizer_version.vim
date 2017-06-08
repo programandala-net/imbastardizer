@@ -1,6 +1,6 @@
 " imbastardizer_version.vim
 
 " This file is part of Imbastardizer
-" http://programandala.net/
+" http://programandala.net/en.program.imbastardizer.html
 
-let g:imbastardizer_version='0.2.3+201612291533'
+let g:imbastardizer_version='0.3.0+201706081625'
