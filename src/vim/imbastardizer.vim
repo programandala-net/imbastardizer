@@ -10,7 +10,7 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201706081626
+" Last modified 201706081657
 
 runtime imbastardizer_version.vim
 
@@ -1045,13 +1045,14 @@ function! BasFile()
   silent update " Write the current source file if needed
   split " Split the window
   if empty(s:basFilename)
-    let s:basFilename=expand('%:r').'.bas'
+    let s:basFilename=expand('%:r').'.target.bas'
   endif
   try
   silent execute 'bd '.s:basFilename
   catch /E94:/
   endtry
   silent execute 'write! '.s:basFilename
+  set nomodeline
   silent execute 'edit '.s:basFilename
 
   echo 'BAS file created'
