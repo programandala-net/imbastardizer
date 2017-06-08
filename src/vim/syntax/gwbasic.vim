@@ -1,9 +1,10 @@
 " Vim syntax file
-" Language:		GW-BASIC
+" Language:	GW-BASIC
 " Maintainer:	Marcos Cruz (programandala.net)
-" License:		Vim license (GPL compatible)
-" URL:			http://programandala.net/
-" Last Change:  2016-12-14
+" License:	Vim license (GPL compatible)
+" URL:		http://programandala.net/
+" Last Change:  2017-06-04
+" See the change log at the end of the file
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -14,9 +15,9 @@ elseif exists("b:current_syntax")
 endif
 
 if version > 600
-  setlocal iskeyword=48-57,65-90,97-122,_,$,#
+  setlocal iskeyword=48-57,65-90,97-122,_,$,#,.
 else
-  set iskeyword=48-57,65-90,97-122,_,$,#
+  set iskeyword=48-57,65-90,97-122,_,$,#,.
 endif
 
 let s:cpo_save = &cpo
@@ -25,6 +26,7 @@ set cpo&vim
 syn case ignore
 
 syn keyword gwbasicKeyword ABS
+syn keyword gwbasicKeyword AND
 syn keyword gwbasicKeyword ASC
 syn keyword gwbasicKeyword ATN
 syn keyword gwbasicKeyword AUTO
@@ -63,6 +65,7 @@ syn keyword gwbasicKeyword DELETE
 syn keyword gwbasicKeyword DIM
 syn keyword gwbasicKeyword DRAW
 syn keyword gwbasicKeyword EDIT
+syn keyword gwbasicKeyword ELSE
 syn keyword gwbasicKeyword END
 syn keyword gwbasicKeyword ENVIRON
 syn keyword gwbasicKeyword ENVIRON$
@@ -123,6 +126,7 @@ syn keyword gwbasicKeyword OCT$
 syn keyword gwbasicKeyword ON
 syn keyword gwbasicKeyword OPEN
 syn keyword gwbasicKeyword OPTION
+syn keyword gwbasicKeyword OR
 syn keyword gwbasicKeyword OUT
 syn keyword gwbasicKeyword PAINT
 syn keyword gwbasicKeyword PALETTE
@@ -170,8 +174,10 @@ syn keyword gwbasicKeyword SWAP
 syn keyword gwbasicKeyword SYSTEM
 syn keyword gwbasicKeyword TAB
 syn keyword gwbasicKeyword TAN
+syn keyword gwbasicKeyword THEN
 syn keyword gwbasicKeyword TIME$
 syn keyword gwbasicKeyword TIMER
+syn keyword gwbasicKeyword TO
 syn keyword gwbasicKeyword TROFF
 syn keyword gwbasicKeyword TRON
 syn keyword gwbasicKeyword UNLOCK
@@ -203,7 +209,7 @@ syn region  gwbasicString		  start=+"+  skip=+\\\\\|\\"+  end=+"+  contains=basi
 
 syn region  gwbasicComment	start="REM" end="$" contains=basicTodo
 syn region  gwbasicComment	start="'" end="$" contains=basicTodo
-syn region  gwbasicLineNumber	start="^\d" end="\s"
+syn region  gwbasicLineNumber	start="^\s*\d" end="\s"
 syn match   gwbasicTypeSpecifier  "[a-zA-Z0-9][\$%&!#]"ms=s+1
 " Used with OPEN statement
 syn match   gwbasicFilenumber  "#\d\+"
@@ -229,6 +235,7 @@ if version >= 508 || !exists("did_basic_syntax_inits")
   HiLink gwbasicNumber		Number
   HiLink gwbasicError		Error
   HiLink gwbasicStatement	Statement
+  HiLink gwbasicKeyword		Statement
   HiLink gwbasicString		String
   HiLink gwbasicComment		Comment
   HiLink gwbasicSpecial		Special
@@ -246,11 +253,17 @@ let b:current_syntax = "basic"
 let &cpo = s:cpo_save
 unlet s:cpo_save
 
-" History
+" ==============================================================
+" Change log
 "
 " 2016-10-30: Start from the source of the generic BASIC syntax file.
 "
 " 2016-12-14: Complete the list of keywords. Combine commands and functions.
+"
+" 2017-06-04: Add "." to allowed characters. Color the keywords. Add `then`
+" and `else`.
+"
+" 2017-06-05: Add `to`, `or`, `and`. Allow spaces before the line number.
 
 " vim: ts=8
 

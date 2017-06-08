@@ -4,10 +4,9 @@
 " Author:      Marcos Cruz (programandala.net)
 " License:     Vim license (GPL compatible)
 " URL:         http://programandala.net/
-" Updated:     2016-12-28
+" Updated:     2017-06-05
 
-" -------------------------------------------------------------
-" Change history: see at the end of the file
+" See change log at the end of the file
 
 " -------------------------------------------------------------
 " To-do
@@ -64,6 +63,7 @@ syn keyword imbasPreProc #vim
 " XXX TODO -- make this depend on the target dialect
 
 syn keyword imbasKeyword ABS
+syn keyword imbasKeyword AND
 syn keyword imbasKeyword ACS
 syn keyword imbasKeyword ADJUST
 syn keyword imbasKeyword AND
@@ -188,6 +188,7 @@ syn keyword imbasKeyword OCT$
 syn keyword imbasKeyword OFF
 syn keyword imbasKeyword ON
 syn keyword imbasKeyword OPEN
+syn keyword imbasKeyword OPTION
 syn keyword imbasKeyword OR
 syn keyword imbasKeyword OUT
 syn keyword imbasKeyword OVER
@@ -333,8 +334,10 @@ endif
 let b:current_syntax = "imbastardizer"
 
 " -------------------------------------------------------------
-" Change history
+" Change log
 
 " 2016-12-14: First version (based on vimclairbasic.vim and imbas, by the same author).
 "
 " 2016-12-28: Fix `csrlin`.
+"
+" 2017-06-05: Add `and`, `option`.
