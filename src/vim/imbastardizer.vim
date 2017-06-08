@@ -1,16 +1,16 @@
 " imbastardizer.vim
 
 " This file is part of Imbastardizer
-" http://programandala.net/
+" http://programandala.net/en.program.imbastardizer.html
 
-" Copyright (C) 2016 Marcos Cruz (programandala.net)
+" Copyright (C) 2016,2017 Marcos Cruz (programandala.net)
 
 " You may do whatever you want with this work, so long as you retain
 " the copyright/authorship/acknowledgment/credit notice(s) and this
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201612291533
+" Last modified 201706081626
 
 runtime imbastardizer_version.vim
 
@@ -229,16 +229,21 @@ function! ExitFor()
   " 'EXIT FOR' and its correspondent 'NEXT' must be at the end of the line.
   " The form 'EXITFOR' is allowed.
 
-  " XXX TODO -- make this dependent on the current target
-
   let s:doStatement=''
+
+  if s:target=='gwbasic'
+    let l:nextPattern='\<next [a-z]\+[%!#]\?\>'
+  elseif s:target='msxbasic'
+    let l:nextPattern='\<next [a-z]\+[%!#]\?\>'
+  elseif s:target="zxspectrumbasic"
+    let l:nextPattern='\<next [a-z]\>'
+  endif
 
   call cursor(1,1)
   while search('\<exit\s\?for$','Wc')
     "echo '  XXX EXIT FOR found at line '.line('.').': '.getline('.')
     let l:exitForLineNumber=line('.')
-    " if search('\<next [a-z]\>','W') " XXX OLD for Sinclair BASIC
-    if search('\<next [a-z]\+[%!#]\?\>','W') " XXX NEW for GW-BASIC
+    if search(l:nextPattern,'W')
       "echo '  XXX NEXT found at line '.line('.').': '.getline('.')
       let l:exitLabel='@forExit'.line('.')
       call append(line('.'),l:exitLabel)
@@ -643,6 +648,8 @@ function! Config()
   " Search and parse the config directives.  They can be anywhere in the source
   " but always at the start of a line (with optional indentation).
 
+  " #target <BASIC dialect identifier>
+  call Target()
   " #renumLine <line number>
   call RenumLine()
   " #procedureCall <keyword>
@@ -655,6 +662,30 @@ function! Config()
   call SaveStep('config_values')
 
 endfunction
+
+function! Target()
+
+  " Store into 's:target' the name of the BASIC dialect target.  Only the
+  " first occurence of '#target' will be used; it can be anywhere in the
+  " source but always at the start of a line (with optional indentation).
+  "
+  " XXX TODO -- Planned targets:
+  " - gwbasic
+  " - zxspectrumbasic
+  " - msxbasic
+
+  let s:target="gwbasic" " default value
+
+  call cursor(1,1) " Go to the top of the file.
+  if search('^\s*#target\s\+','Wc')
+    let l:valuePos=matchend(getline('.'),'^\s*#renumline\s\+')
+    let s:target=strpart(getline('.'),l:valuePos)
+    call setline('.','')
+  endif
+  echo 'Target: '.s:target
+
+endfunction
+
 
 function! RenumLine()
 
@@ -722,6 +753,10 @@ function! Run()
 endfunction
 
 " XXX OLD
+"
+" XXX TODO -- restore it, because the directive will be ignored in BASIC
+" targets that don't need it:
+
 " function! RunLabel()
 
 "   " Config the auto-run line number.
@@ -978,6 +1013,7 @@ function! Addresses2Chars()
   "   let a$="{{0xFFFF}}{{2048}}"
 
   " XXX TODO -- adapt
+  " XXX TODO -- make this optional, with a directive
 
   %substitute@{{\([0-9]\{-}\)}}@\=Address2Chars(submatch(1))@ge
   %substitute@{{0x\([0-9A-Fa-f]\{-}\)}}@\=Address2Chars(str2nr(submatch(1),16))@ge
