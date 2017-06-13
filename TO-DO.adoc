@@ -1,6 +1,6 @@
 = Imbastardizer To-Do List
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-06-08
+:revdate: 2017-06-14
 
 This file is part of
 http://programandala.net/en.program.imbastardizer.html[Imbastardizer],
@@ -18,8 +18,9 @@ by Marcos Cruz (programandala.net).
 - If a expression starts with a `NOT`, it should be removed
   instead of adding another `NOT` to it (when loops and
   conditional are converted to jumps).
-- When '#filename X' is not at the left margin, the datum stored
-  is part of "#filename".
+- When `#filename X` is not at the left margin, the datum stored
+  is part of `#filename`.
+- 2017-06-14: `#target`.
 
 == Improve
 

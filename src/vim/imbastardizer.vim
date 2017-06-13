@@ -10,7 +10,7 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201706132324
+" Last modified 201706140052
 
 runtime imbastardizer_version.vim
 
@@ -231,11 +231,13 @@ function! ExitFor()
 
   let s:doStatement=''
 
-  if s:target=='gwbasic'
+  if s:target=='pcbasic'
     let l:nextPattern='\<next [a-z]\+[%!#]\?\>'
-  elseif s:target='msxbasic'
+  elseif s:target=='gwbasic'
     let l:nextPattern='\<next [a-z]\+[%!#]\?\>'
-  elseif s:target="zxspectrumbasic"
+  elseif s:target=='msxbasic'
+    let l:nextPattern='\<next [a-z]\+[%!#]\?\>'
+  elseif s:target=="zxspectrumbasic"
     let l:nextPattern='\<next [a-z]\>'
   endif
 
@@ -544,7 +546,7 @@ function! ConditionalConversion()
 
   let l:unresolvedCondition=0 " flag
 
-  while search('^\s*#if\(\(n\)\?def\1target\)\s\+.\+$','Wc')
+  while search('^\s*#if\(\(n\)\?def\|target\)\s\+.\+$','Wc')
 
     let l:else=0 " flag
 
@@ -670,15 +672,16 @@ function! Target()
   " source but always at the start of a line (with optional indentation).
   "
   " XXX TODO -- Planned targets:
+  " - pcbasic
   " - gwbasic
   " - zxspectrumbasic
   " - msxbasic
 
-  let s:target="gwbasic" " default value
+  let s:target="pcbasic" " default value
 
   call cursor(1,1) " Go to the top of the file.
   if search('^\s*#target\s\+','Wc')
-    let l:valuePos=matchend(getline('.'),'^\s*#renumline\s\+')
+    let l:valuePos=matchend(getline('.'),'^\s*#target\s\+')
     let s:target=strpart(getline('.'),l:valuePos)
     if !empty(s:target)
       call add(s:definedTags,s:target)
@@ -686,6 +689,8 @@ function! Target()
     call setline('.','')
   endif
   echo 'Target: '.s:target
+  
+  call SaveStep('target')
 
 endfunction
 
@@ -786,8 +791,6 @@ function! Define()
 
   " There can be any number of '#define' directives, but they must be alone on
   " their own source lines (with optional indentation).
-
-  let s:definedTags=[] " a list for the '#define' tags
 
   call cursor(1,1) " Go to the top of the file.
   while search('^\s*#define\s\+','Wc')
@@ -1152,6 +1155,8 @@ function! Imbastardizer(outputFile)
   echo "\n"
   echo 'Imbastardizer (version '.g:imbastardizer_version.') by Marcos Cruz (programandala.net)'
   echo "\n"
+
+  let s:definedTags=[] " a list for the '#define' tags (and `#target`)
 
   " Conversion steps
   call BasFile()

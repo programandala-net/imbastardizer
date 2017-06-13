@@ -4,7 +4,7 @@
 " Author:      Marcos Cruz (programandala.net)
 " License:     Vim license (GPL compatible)
 " URL:         http://programandala.net/
-" Updated:     2017-06-05
+" Updated:     2017-06-14
 
 " See change log at the end of the file
 
@@ -50,11 +50,13 @@ syn keyword imbasPreProc #else
 syn keyword imbasPreProc #filename
 syn keyword imbasPreProc #ifdef
 syn keyword imbasPreProc #ifndef
+syn keyword imbasPreProc #iftarget
 syn keyword imbasPreProc #include
 syn keyword imbasPreProc #previm
 syn keyword imbasPreProc #procedurecall
 syn keyword imbasPreProc #renumline
 syn keyword imbasPreProc #run
+syn keyword imbasPreProc #target
 syn keyword imbasPreProc #vim
 
 " -------------------------------------------------------------
@@ -341,3 +343,7 @@ let b:current_syntax = "imbastardizer"
 " 2016-12-28: Fix `csrlin`.
 "
 " 2017-06-05: Add `and`, `option`.
+"
+" 2017-06-13: Add `#iftarget`.
+"
+" 2017-06-14: Add `#target`.
