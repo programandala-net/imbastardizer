@@ -10,7 +10,7 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201706081657
+" Last modified 201706132324
 
 runtime imbastardizer_version.vim
 
@@ -544,7 +544,7 @@ function! ConditionalConversion()
 
   let l:unresolvedCondition=0 " flag
 
-  while search('^\s*#if\(n\)\?def\s\+.\+$','Wc')
+  while search('^\s*#if\(\(n\)\?def\1target\)\s\+.\+$','Wc')
 
     let l:else=0 " flag
 
@@ -554,11 +554,11 @@ function! ConditionalConversion()
 
       let l:currentLine=getline('.')
 
-      if l:currentLine=~'^\s*#ifdef\s\+.\+'
+      if l:currentLine=~'^\s*#if\(def\|target\)\s\+.\+'
         " #IFDEF
 "        echo 'XXX #ifdef found'
         if l:unresolvedCondition
-          echoerr '#ifdef structures can not be nested'
+          echoerr '`#if[n]def` and `#iftarget` structures can not be nested'
           break
         else
           call Ifdef()
@@ -568,7 +568,7 @@ function! ConditionalConversion()
         " #IFNDEF
 "        echo 'XXX #ifndef found ----------------------'
         if l:unresolvedCondition
-          echoerr '#ifndef structures can not be nested'
+          echoerr '`#ifndef` structures can not be nested'
           break
         else
           call Ifdef()
@@ -590,7 +590,7 @@ function! ConditionalConversion()
         " #ELSE
 "        echo 'XXX #else found'
         if l:else
-          echoerr 'More than one #else in the same #if[n]def structure'
+          echoerr 'More than one `#else` in a `#if[n]def` or `#iftarget` structure'
           break
         else
           let l:else=1
@@ -614,7 +614,7 @@ function! ConditionalConversion()
     endwhile
 
     if l:unresolvedCondition
-      echoerr '#IF[N]DEF without #ENDIF at line '.l:ifLineNumber
+      echoerr '`#if[n]def` or `#iftarget` without `#endif` at line '.l:ifLineNumber
     endif
 
   endwhile
@@ -680,6 +680,9 @@ function! Target()
   if search('^\s*#target\s\+','Wc')
     let l:valuePos=matchend(getline('.'),'^\s*#renumline\s\+')
     let s:target=strpart(getline('.'),l:valuePos)
+    if !empty(s:target)
+      call add(s:definedTags,s:target)
+    endif
     call setline('.','')
   endif
   echo 'Target: '.s:target
