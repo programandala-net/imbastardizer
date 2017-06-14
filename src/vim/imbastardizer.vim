@@ -10,7 +10,7 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201706140052
+" Last modified 201706141116
 
 runtime imbastardizer_version.vim
 
@@ -629,10 +629,10 @@ endfunction
 function! Ifdef()
 
     let l:ifLineNumber=line('.')
-    let l:tagPos=matchend(getline('.'),'^\s*#if\(n\)\?def\s\+')
+    let l:tagPos=matchend(getline('.'),'^\s*#if\(\(n\)\?def\|target\)\s\+')
     let l:tag=Trim(strpart(getline('.'),l:tagPos))
 "    echo 'XXX l:tag='.l:tag
-    let l:tagMustBeDefined=(getline('.')=~'^\s*#ifdef')
+    let l:tagMustBeDefined=(getline('.')=~'^\s*#if\(def\|target\)')
 "    echo 'XXX l:tagMustBeDefined='.l:tagMustBeDefined
     let l:tagIsDefined=Defined(l:tag)
 "    echo 'XXX l:tagIsDefined='.l:tagIsDefined
