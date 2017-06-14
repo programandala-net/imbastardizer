@@ -20,7 +20,6 @@ by Marcos Cruz (programandala.net).
   conditional are converted to jumps).
 - When `#filename X` is not at the left margin, the datum stored
   is part of `#filename`.
-- 2017-06-14: `#target`.
 
 == Improve
 
