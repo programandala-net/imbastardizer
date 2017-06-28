@@ -10,7 +10,7 @@
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201706141116
+" Last modified 201706161214
 
 runtime imbastardizer_version.vim
 
@@ -298,7 +298,9 @@ function! IfEndif()
   "     code2
   "   ELSE
   "     code3
-  "   END IF
+  "   ENDIF
+
+  " 'END IF' can be used instead of 'ENDIF'.
 
   "echo '  XXX About to search for a long IF!'
   call cursor(1,1)
@@ -530,7 +532,7 @@ function! ConditionalConversion()
 
   " Parse and interpret all conditional conversion directives.
 
-  " XXX TODO finish
+  " XXX TODO -- Make the structure nestable.
 
   " Syntax:
   "
@@ -539,6 +541,8 @@ function! ConditionalConversion()
   "   #else
   "     ...
   "   #endif
+
+  " '#iftarget' is a synonym of '#ifdef'.
 
   " Note: The conditions can not be nested.
 
