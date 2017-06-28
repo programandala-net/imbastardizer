@@ -23,7 +23,7 @@ by Marcos Cruz (programandala.net).
 
 == Improve
 
-- Make `silent` configurable in #vim substitutions.
+- Make `silent` configurable in `#vim` substitutions.
 - Error message if `#include` file is not found.
 - Now substitions can change ordinary texts. A fixed format is
   required, e.g. `variable&` or `constant!`...  Why not to use a
