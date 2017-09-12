@@ -20,6 +20,7 @@
 
 # 2016-12-14: Start.
 # 2017-06-08: Update header.
+# 2017-06-28: Improve comments.
 
 # ==============================================================
 # To-do
@@ -64,6 +65,8 @@ fi
 
 # Vim options used:
 # -e = Enter Vim in ex mode (in this case, the goal is just
+#      preventing Vim from clearing the screen).
+# -E = Enter Vim in improved ex mode (in this case, the goal is just
 #      preventing Vim from clearing the screen).
 # -n = No swap file will be used. This makes it possible
 #      to convert a file currently open by other instance of Vim,

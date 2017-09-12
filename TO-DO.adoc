@@ -1,6 +1,6 @@
 = Imbastardizer To-Do List
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-06-14
+:revdate: 2017-09-12
 
 This file is part of
 http://programandala.net/en.program.imbastardizer.html[Imbastardizer],
@@ -36,6 +36,9 @@ by Marcos Cruz (programandala.net).
   X`.
 - Errors should be returned as exit status, in order to make
   things easier for 'make' and other tools. But how?
+- Rewrite the installer after SBim.
+- Improve the command line wrapper with optional output file, after
+  SBim.
 
 == Implement
 
