@@ -2,7 +2,7 @@
 
 # install.sh
 
-# This file is part of fsb
+# This file is part of Imbastardizer
 # http://programandala.net
 
 # ##############################################################
