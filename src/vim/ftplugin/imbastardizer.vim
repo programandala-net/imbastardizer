@@ -9,7 +9,7 @@
 
 " Change history
 "
-" 2016-12-14: Start, adapted from <~/.vim/ftplugin/imbastardizer.vim>.
+" 2016-12-14: Start, adapted from <~/.vim/ftplugin/vimclair_basic.vim>.
 
 setlocal tabstop=2
 setlocal softtabstop=0
