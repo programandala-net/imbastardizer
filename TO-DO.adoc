@@ -1,6 +1,6 @@
 = Imbastardizer To-Do List
 :author: Marcos Cruz (programandala.net)
-:revdate: 2017-09-12
+:revdate: 2017-09-25
 
 This file is part of
 http://programandala.net/en.program.imbastardizer.html[Imbastardizer],
@@ -53,4 +53,7 @@ by Marcos Cruz (programandala.net).
 - Write an installer.
 - 2016-12-29: Modular support for targets: one configuration file for
   target.
+- 2017-09-25: `#doseol` and `#unixeol` directives, and equivalent
+  command line parameters as well. The DOS EOL is needed to load the
+  GW-BASIC sources on the original interpreter.
 
