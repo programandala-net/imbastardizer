@@ -1,7 +1,7 @@
 # Imbastardizer
 
 <!--
-Last modified 20210408T1820+0200.
+Last modified 20210408T1918+0200.
 -->
 
 ## Description
@@ -88,7 +88,7 @@ The supported features were the following:
 In 2016-12..2017-07 Imbastardizer was heavily tested during the
 development of the [CE4 project in
 GW-BASIC](http://fossil.programandala.net/ce4/timeline?r=imbastardizer)
-for the http://pc-basic.org[PC-BASIC] emulator.
+for the [PC-BASIC emulator](http://pc-basic.org).
 
 Then the CE4 project changed its target platform and the development
 of Imbastardizer stagned. Besides, although it worked great, extending
