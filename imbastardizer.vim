@@ -1,16 +1,17 @@
 " imbastardizer.vim
 
-" This file is part of Imbastardizer
-" http://programandala.net/en.program.imbastardizer.html
+" Imbastardizer
 
-" Copyright (C) 2016,2017 Marcos Cruz (programandala.net)
+" Version 1.0.0-dev.0.0.0+20210408T2051CEST.
+
+" Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
 " You may do whatever you want with this work, so long as you retain
 " the copyright/authorship/acknowledgment/credit notice(s) and this
 " license in all redistributed copies and derived works.  There is no
 " warranty.
 
-" Last modified 201706161214
+" http://programandala.net/en.program.imbastardizer.html
 
 runtime imbastardizer_version.vim
 
