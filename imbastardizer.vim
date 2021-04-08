@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.1.0+20210408T2111CEST.
+" Version 1.0.0-dev.0.2.0+20210408T2118CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -153,15 +153,13 @@ function! ConditionalConversion()
   "     ...
   "   #endif
 
-  " '#iftarget' is a synonym of '#ifdef'.
-
   " Note: The conditions can not be nested.
 
   call cursor(1,1)
 
   let l:unresolvedCondition=0 " flag
 
-  while search('^\s*#if\(\(n\)\?def\|target\)\s\+.\+$','Wc')
+  while search('^\s*#if\(n\)\?def\s\+.\+$','Wc')
 
     let l:else=0 " flag
 
@@ -171,11 +169,11 @@ function! ConditionalConversion()
 
       let l:currentLine=getline('.')
 
-      if l:currentLine=~'^\s*#if\(def\|target\)\s\+.\+'
+      if l:currentLine=~'^\s*#ifdef\s\+.\+'
         " #IFDEF
 "        echo 'XXX #ifdef found'
         if l:unresolvedCondition
-          echoerr '`#if[n]def` and `#iftarget` structures can not be nested'
+          echoerr '`#if[n]def` structures can not be nested'
           break
         else
           call Ifdef()
@@ -207,7 +205,7 @@ function! ConditionalConversion()
         " #ELSE
 "        echo 'XXX #else found'
         if l:else
-          echoerr 'More than one `#else` in a `#if[n]def` or `#iftarget` structure'
+          echoerr 'More than one `#else` in a `#if[n]def` structure'
           break
         else
           let l:else=1
@@ -231,7 +229,7 @@ function! ConditionalConversion()
     endwhile
 
     if l:unresolvedCondition
-      echoerr '`#if[n]def` or `#iftarget` without `#endif` at line '.l:ifLineNumber
+      echoerr '`#if[n]def` or without `#endif` at line '.l:ifLineNumber
     endif
 
   endwhile
@@ -243,10 +241,10 @@ endfunction
 function! Ifdef()
 
     let l:ifLineNumber=line('.')
-    let l:tagPos=matchend(getline('.'),'^\s*#if\(\(n\)\?def\|target\)\s\+')
+    let l:tagPos=matchend(getline('.'),'^\s*#if\(n\)\?def\s\+')
     let l:tag=Trim(strpart(getline('.'),l:tagPos))
 "    echo 'XXX l:tag='.l:tag
-    let l:tagMustBeDefined=(getline('.')=~'^\s*#if\(def\|target\)')
+    let l:tagMustBeDefined=(getline('.')=~'^\s*#ifdef')
 "    echo 'XXX l:tagMustBeDefined='.l:tagMustBeDefined
     let l:tagIsDefined=Defined(l:tag)
 "    echo 'XXX l:tagIsDefined='.l:tagIsDefined
@@ -439,18 +437,11 @@ endfunction
 
 function! Imbastardizer()
 
-  " Convert the content of the current Vim buffer, a Imbastardizer source, to
-  " its BASIC target equivalent.
-  "
-  " This is an entry function of the converter. This function can be called
-  " using a Vim key mapping (as defined in
-  " <~/.vim/ftplugins/imbastardizer.vim>), manually executed with ':call
-  " Imbastardizer()' or called from the provided command line wrapper
-  " <imbastardizer.sh>.
+  " Convert the content of the current Vim buffer.
 
   call SaveVariables()
 
-  let s:definedTags=[] " a list for the '#define' tags (and `#target`)
+  let s:definedTags=[] " a list for the '#define' tags
 
   " Conversion steps
   call Include()
