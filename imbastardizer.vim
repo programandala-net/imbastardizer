@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.4.0+20210409T1212CEST.
+" Version 1.0.0-dev.0.5.0+20210409T1222CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -92,6 +92,8 @@ function! DoVim(directive)
 
   endif
 
+  call SaveStep(a:directive.' executed')
+
 endfunction
 
 function! Vim()
@@ -108,6 +110,8 @@ function! Vim()
   " if needed for debugging; besides, it would be of no use):
 
   silent! %s/^\n//e
+
+  call SaveStep('empty_lines_removed')
 
 endfunction
 
@@ -145,7 +149,7 @@ function! Include()
   "   echo l:includedFiles 'files included'
   " endif
 
-  call SaveStep('included_files')
+  call SaveStep('#include_executed')
 
 endfunction
 
@@ -247,7 +251,7 @@ function! ConditionalConversion()
 
   endwhile
 
-  call SaveStep('conditional_conversion')
+  call SaveStep('#ifdef_executed')
 
 endfunction
 
@@ -288,12 +292,15 @@ function! Define()
     call setline('.','')
   endwhile
 
-  let l:tags=len(s:definedTags)
-  if l:tags==1
-    echo l:tags.' #define directive'
-  elseif l:tags>1
-    echo l:tags.' #define directives'
-  endif
+  " XXX OLD
+  " let l:tags=len(s:definedTags)
+  " if l:tags==1
+  "   echo l:tags.' #define directive'
+  " elseif l:tags>1
+  "   echo l:tags.' #define directives'
+  " endif
+
+  call SaveStep('#define_executed')
 
 endfunction
 
@@ -340,6 +347,8 @@ function! Labels()
   while search('^@[0-9a-zA-Z_]\+:\s*$','Wce')
     join
   endwhile
+
+  call SaveStep('label_definitions_joined_to_the_following_line')
 
   " Create an empty dictionary to store the line numbers of the labels;
   " the labels will be used as keys:
@@ -417,7 +426,7 @@ function! Renum()
   " Remove empty lines
   silent! %substitute/^\s*\d\+\s\+\n//e
 
-  call SaveStep('line_numbers')
+  call SaveStep('line_numbers_added')
 
 endfunction
 
@@ -441,10 +450,8 @@ function! SaveStep(description)
   " into the directory hold in the s:stepsDir variable,
   " for debugging purposes.
 
-  " XXX TODO better, add 0 if s:step<10
-  let l:number='00'.s:step
-  let l:number=strpart(l:number,len(l:number)-2)
-  " XXX TODO make the trace dir configurable
+  let l:number='000'.s:step
+  let l:number=strpart(l:number,len(l:number)-3)
   silent execute 'write! '.s:stepsDir.s:sourceFilename.'.step_'.l:number.'_'.a:description
   let s:step=s:step+1
 
@@ -475,6 +482,7 @@ endfunction
   let s:sourceFileDir=fnamemodify(expand('%'),':p:h')
 
   " Absolute directory to save the conversion steps into
+  " XXX TODO Make the steps dir configurable.
   let s:stepsDir=s:sourceFileDir.'/imbastardizer_steps/'
   if !isdirectory(s:stepsDir)
     " XXX TODO if exists("*mkdir")
@@ -483,6 +491,7 @@ endfunction
   endif
 
   " Conversion steps
+  call SaveStep('untouched_original')
   "call Include()
   "call Define()
   "call ConditionalConversion()
@@ -493,6 +502,7 @@ endfunction
 
   " Remove the empty lines
   silent! %s/\n$//e
+  call SaveStep('empty_lines_removed')
 
   " Restore the variables that were changed
   let &ignorecase=s:ignorecaseBackup
