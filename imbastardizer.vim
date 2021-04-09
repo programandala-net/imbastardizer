@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.5.0+20210409T1222CEST.
+" Version 1.0.0-dev.0.6.0+20210409T1925CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -14,28 +14,33 @@
 " http://programandala.net/en.program.imbastardizer.html
 
 " ==============================================================
+" Requirements
+
+" nl from the GNG Coreutils.
+" http://www.gnu.org/software/coreutils/manual/coreutils.html#nl-invocation
+
+" ==============================================================
 " Clean {{{1
 
 function! Clean()
 
   " Clean the source code.
 
-  " Save the '#vim' directives XXX OLD
-"  let l:mark='vimcommand'.localtime()
-"  execute 'silent! %s/^\s*#vim\>/'.l:mark.'/ei'
+  "silent! %s/^\s\+//e " Remove indentation
+  "silent! %s/\s\+$//e " Remove trailing spaces
+  " Remove leading and trailing spaces
+  silent! %s/\s*\(.\+\)\?\s*$/\1/e
 
-  " Remove the metacomments
-  silent! %s/^\s*#\(\s.*\)\?$//e
+  " Remove hash line comments
+  silent! %s/^\s*#\( .*\)\?\n//e
 
-  " Restore the '#vim' directives XXX OLD
-"  execute 'silent! %s/^'.l:mark.'/#vim/e'
+  " Remove empty lines
+  silent! %s/\%^\n\+//e " at the top of the file
+  silent! %s/\n\n\+/\r/e
+  silent! %s/\n\+\%$//e " at the bottom of the file
 
-  silent! %s/\s*\/\/.*$//e " Remove the // line comments
-  silent! %s,^\s*\/\*\_.\{-}\*\/,,e " Remove the /* */ block comments
-  silent! %s/^\s\+//e " Remove indentation
-  silent! %s/\s\+$//e " Remove trailing spaces
-  silent! %s/^\n//e " Remove the empty lines
-  silent! %s/\\\n//e " Join the splitted lines
+  " Join splitted lines
+  silent! %s/\\\n//e
 
   call SaveStep('clean')
 
@@ -328,23 +333,18 @@ function! Labels()
 
   " Sintax:
 
-  " Label names must start with '@'. The rest of the name must be letters A-Z,
-  " a-z, digits or underscores.
-
-  " A label is defined by putting the label name at the start of a line. If a
-  " BASIC command follows it, a colon or a space are required between them.
-
-  " The label references are the label names. They will be replaced with
-  " the correspondent line number anywhere in the source -- even in text
-  " strings!
-
-  let l:ignorecaseBackup=&ignorecase
-  set ignorecase
+  " A label is defined with the text `@label:' at the beginning
+  " of a line (possibly preceded by whitespace). It can be
+  " referred to (before or after) with  `@label'. Only letters
+  " A-Z, a-z digits and underscores can be used in a label name.
+  "
+  " Label references will be replaced with the correspondent
+  " line number anywhere in the source, even in text strings!
 
   " Join every label to its following line:
 
   call cursor(1,1)
-  while search('^@[0-9a-zA-Z_]\+:\s*$','Wce')
+  while search('^@[0-9a-zA-Z_]\+:$','Wce')
     join
   endwhile
 
@@ -360,19 +360,28 @@ function! Labels()
   " Search for label definitions and store them into the dictionary:
   while search('^@[0-9a-zA-Z_]\+:','w')
 
-    " Store the found label into register 'l':
-    normal "l3dw
+    " Store the found label into register 'l' and remove its
+    " trailing colon:
+    normal "l2dwx
 
     " XXX INFORMER
 "    echo 'Raw label found: <' . getreg('l',1) . '>'
 "    let l:label=tolower(getreg('l',1))
+
     let l:label=Trim(getreg('l',1))
-    let l:label=strpart(l:label,0,len(l:label)-1)
+
+    " XXX OLD, used when the trailing colon was not removed in
+    " normal mode:
+    " let l:label=strpart(l:label,0,len(l:label)-1)
+
     let l:labelValue=line('.')+s:renumLine-1
+
     " XXX INFORMER
 "    echo '  XXX Clean label: <' . l:label . '> = '.l:labelValue
+
     " Use the label as the key to its line number:
     let l:lineNumber[l:label]=l:labelValue
+
   endwhile
 
   " Remove all label definitions:
@@ -389,6 +398,7 @@ function! Labels()
     "call input('Press ENTER to continue')
 
     call cursor(1,1) " Go to the top of the file.
+
     " Do the subtitution:
     while search(l:label.'\>','Wc')
 
@@ -402,10 +412,10 @@ function! Labels()
       else
         execute 'silent! substitute/'.l:label.'\>/'.l:lineNumber[l:label].'/ei'
       endif
-    endwhile
-  endfor
 
-  let &ignorecase=l:ignorecaseBackup
+    endwhile
+
+  endfor
 
   call SaveStep('labels_translated')
 
@@ -413,18 +423,16 @@ endfunction
 
 function! Renum()
 
-  " Call the nl program (part of the Debian coreutils package):
-  execute "silent! %!nl --body-numbering=t --number-format=rn --number-width=1 --number-separator=' ' --starting-line-number=".s:renumLine." --line-increment=1 --body-numbering=a"
+  " Add line numbers.
 
-  " In older versions of coreutils,
-  " -v sets the first line number, and -i sets the line increment.
-  " (the long option for -v doesn't work, though the manual mentions it).
-  " Modern versions of nl uses the clearer options
-  " --first-line and --line-increment, see:
+  " Requirement: nl from the GNG Coreutils.
   " http://www.gnu.org/software/coreutils/manual/coreutils.html#nl-invocation
 
+  execute "silent! %!nl --body-numbering=t --number-format=rn --number-width=1 --number-separator=' ' --starting-line-number=".s:renumLine." --line-increment=1 --body-numbering=a"
+
+  " XXX OLD
   " Remove empty lines
-  silent! %substitute/^\s*\d\+\s\+\n//e
+  " silent! %substitute/^\s*\d\+\s\+\n//e
 
   call SaveStep('line_numbers_added')
 
@@ -434,9 +442,12 @@ endfunction
 " Generic functions {{{1
 
 function! Trim(input_string)
+
   " Remove trailing spaces from a string.
+
   " Reference:
   " http://stackoverflow.com/questions/4478891/is-there-a-vimscript-equivalent-for-rubys-strip-strip-leading-and-trailing-s
+
   return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
 
 endfunction
@@ -468,6 +479,10 @@ endfunction
   set shortmess=at
   let s:ignorecaseBackup=&ignorecase
   set ignorecase
+
+  " Open all folds (otherwise joining the labels to their
+  " following line fails):
+  set nofoldenable
 
   let s:definedTags=[] " a list for the '#define' tags
   let s:renumLine=1

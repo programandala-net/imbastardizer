@@ -5,7 +5,7 @@ This file is part of
 
 By Marcos Cruz (programandala.net).
 
-Last modified 20210408T1820+0200.
+Last modified 20210409T1408+0200.
 
 ## Fix
 
@@ -26,6 +26,7 @@ Last modified 20210408T1820+0200.
   things easier for 'make' and other tools. But how?
 - Improve the command line wrapper with optional output file, after
   SBim.
+- Save a step only if the buffer has changed.
 
 ## Add
 
