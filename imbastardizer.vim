@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.3.0+20210408T2350CEST.
+" Version 1.0.0-dev.0.4.0+20210409T1212CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -36,6 +36,8 @@ function! Clean()
   silent! %s/\s\+$//e " Remove trailing spaces
   silent! %s/^\n//e " Remove the empty lines
   silent! %s/\\\n//e " Join the splitted lines
+
+  call SaveStep('clean')
 
 endfunction
 
@@ -133,6 +135,17 @@ function! Include()
     let l:filecontent=readfile(s:sourceFileDir.'/'.l:filename)
     call append('.',l:filecontent)
   endwhile
+
+  " XXX OLD
+  " if l:includedFiles==0
+  "   echo 'No file included'
+  " elseif l:includedFiles==1
+  "   echo 'One file included'
+  " else
+  "   echo l:includedFiles 'files included'
+  " endif
+
+  call SaveStep('included_files')
 
 endfunction
 
@@ -233,6 +246,8 @@ function! ConditionalConversion()
     endif
 
   endwhile
+
+  call SaveStep('conditional_conversion')
 
 endfunction
 
@@ -354,7 +369,10 @@ function! Labels()
   " Remove all label definitions:
   silent! %substitute/^@[0-9a-zA-Z_]\+:\s*//eig
 
+  call SaveStep('label_definitions_removed')
+
   " Replace every label reference with its line number:
+
   for l:label in keys(l:lineNumber)
 
     " XXX INFORMER
@@ -380,6 +398,8 @@ function! Labels()
 
   let &ignorecase=l:ignorecaseBackup
 
+  call SaveStep('labels_translated')
+
 endfunction
 
 function! Renum()
@@ -397,6 +417,8 @@ function! Renum()
   " Remove empty lines
   silent! %substitute/^\s*\d\+\s\+\n//e
 
+  call SaveStep('line_numbers')
+
 endfunction
 
 " ==============================================================
@@ -407,6 +429,25 @@ function! Trim(input_string)
   " Reference:
   " http://stackoverflow.com/questions/4478891/is-there-a-vimscript-equivalent-for-rubys-strip-strip-leading-and-trailing-s
   return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
+
+endfunction
+
+" ==============================================================
+" Debug {{{1
+
+function! SaveStep(description)
+
+  " Save the current version of the file being converted,
+  " into the directory hold in the s:stepsDir variable,
+  " for debugging purposes.
+
+  " XXX TODO better, add 0 if s:step<10
+  let l:number='00'.s:step
+  let l:number=strpart(l:number,len(l:number)-2)
+  " XXX TODO make the trace dir configurable
+  silent execute 'write! '.s:stepsDir.s:sourceFilename.'.step_'.l:number.'_'.a:description
+  let s:step=s:step+1
+
 endfunction
 
 " ==============================================================
@@ -423,6 +464,23 @@ endfunction
 
   let s:definedTags=[] " a list for the '#define' tags
   let s:renumLine=1
+
+  " Counter for the saved step files
+  let s:step=0
+
+  " Filename of the source file, without path
+  let s:sourceFilename=fnamemodify(expand('%'),':t')
+
+  " Absolute directory of the source file
+  let s:sourceFileDir=fnamemodify(expand('%'),':p:h')
+
+  " Absolute directory to save the conversion steps into
+  let s:stepsDir=s:sourceFileDir.'/imbastardizer_steps/'
+  if !isdirectory(s:stepsDir)
+    " XXX TODO if exists("*mkdir")
+    " XXX TODO catch possible errors
+    call mkdir(s:stepsDir,'',0700)
+  endif
 
   " Conversion steps
   "call Include()
