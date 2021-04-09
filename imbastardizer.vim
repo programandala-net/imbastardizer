@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.2.0+20210408T2118CEST.
+" Version 1.0.0-dev.0.3.0+20210408T2350CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -13,7 +13,8 @@
 
 " http://programandala.net/en.program.imbastardizer.html
 
-" ----------------------------------------------
+" ==============================================================
+" Clean {{{1
 
 function! Clean()
 
@@ -36,12 +37,13 @@ function! Clean()
   silent! %s/^\n//e " Remove the empty lines
   silent! %s/\\\n//e " Join the splitted lines
 
-  echo 'Source code cleaned'
-
 endfunction
 
+" ==============================================================
+" Directives {{{1
+
 " ----------------------------------------------
-" Metacommands
+" #vim {{{2
 
 function! DoVim(directive)
 
@@ -107,6 +109,9 @@ function! Vim()
 
 endfunction
 
+" ----------------------------------------------
+" #include {{{2
+
 function! Include()
 
   " Execute all '#include' directives.
@@ -129,15 +134,10 @@ function! Include()
     call append('.',l:filecontent)
   endwhile
 
-  if l:includedFiles==0
-    echo 'No file included'
-  elseif l:includedFiles==1
-    echo 'One file included'
-  else
-    echo l:includedFiles 'files included'
-  endif
-
 endfunction
+
+" ----------------------------------------------
+" #ifdef {{{2
 
 function! ConditionalConversion()
 
@@ -220,7 +220,7 @@ function! ConditionalConversion()
         break
       else
         if l:unresolvedCondition && !s:keepSource
-            call setline('.','')
+          call setline('.','')
         endif
       endif
 
@@ -233,8 +233,6 @@ function! ConditionalConversion()
     endif
 
   endwhile
-
-  echo 'Conditional conversion done'
 
 endfunction
 
@@ -255,11 +253,11 @@ function! Ifdef()
 endfunction
 
 " ----------------------------------------------
-" Config commands
+" #define {{{2
 
 function! Define()
 
-  " Search and execute all '#define' directives.
+  " Search for and execute all '#define' directives.
 
   " There can be any number of '#define' directives, but they must be alone on
   " their own source lines (with optional indentation).
@@ -301,8 +299,8 @@ function! Defined(needle)
 
 endfunction
 
-" ----------------------------------------------
-" Labels and line numbers
+" ==============================================================
+" Labels and line numbers {{{1
 
 function! Labels()
 
@@ -314,17 +312,17 @@ function! Labels()
   " A label is defined by putting the label name at the start of a line. If a
   " BASIC command follows it, a colon or a space are required between them.
 
-  " The label references are the label names. They will be substituted with
+  " The label references are the label names. They will be replaced with
   " the correspondent line number anywhere in the source -- even in text
   " strings!
 
-  let l:ignoreCaseBackup=&ignorecase
+  let l:ignorecaseBackup=&ignorecase
   set ignorecase
 
   " Join every label to its following line:
 
   call cursor(1,1)
-  while search('^\(@[0-9a-zA-Z_]\+\s\?\)\+$','Wce')
+  while search('^@[0-9a-zA-Z_]\+:\s*$','Wce')
     join
   endwhile
 
@@ -335,26 +333,28 @@ function! Labels()
   " Go to the top of the file:
   call cursor(1,1)
 
-    " Search for label definitions and store them into the dictionary:
-  while search('^@[0-9a-zA-Z_]\+\>','w')
+  " Search for label definitions and store them into the dictionary:
+  while search('^@[0-9a-zA-Z_]\+:','w')
 
     " Store the found label into register 'l':
-    normal "l2dw
+    normal "l3dw
+
     " XXX INFORMER
 "    echo 'Raw label found: <' . getreg('l',1) . '>'
 "    let l:label=tolower(getreg('l',1))
     let l:label=Trim(getreg('l',1))
+    let l:label=strpart(l:label,0,len(l:label)-1)
     let l:labelValue=line('.')+s:renumLine-1
     " XXX INFORMER
-    "echo '  XXX Clean label: <' . l:label . '> = '.l:labelValue
+"    echo '  XXX Clean label: <' . l:label . '> = '.l:labelValue
     " Use the label as the key to its line number:
     let l:lineNumber[l:label]=l:labelValue
   endwhile
 
   " Remove all label definitions:
-  silent! %substitute/^@[0-9a-zA-Z_]\+\s*:\?\s*//ei
+  silent! %substitute/^@[0-9a-zA-Z_]\+:\s*//eig
 
-  " Substitute every label reference with its line number:
+  " Replace every label reference with its line number:
   for l:label in keys(l:lineNumber)
 
     " XXX INFORMER
@@ -378,16 +378,14 @@ function! Labels()
     endwhile
   endfor
 
-  let &ignorecase=l:ignoreCaseBackup
-
-  echo 'Labels translated'
+  let &ignorecase=l:ignorecaseBackup
 
 endfunction
 
 function! Renum()
 
   " Call the nl program (part of the Debian coreutils package):
-  execute "silent! %!nl --body-numbering=t --number-format=rn --number-width=5 --number-separator=' ' --starting-line-number=".s:renumLine." --line-increment=1 --body-numbering=a"
+  execute "silent! %!nl --body-numbering=t --number-format=rn --number-width=1 --number-separator=' ' --starting-line-number=".s:renumLine." --line-increment=1 --body-numbering=a"
 
   " In older versions of coreutils,
   " -v sets the first line number, and -i sets the line increment.
@@ -396,20 +394,13 @@ function! Renum()
   " --first-line and --line-increment, see:
   " http://www.gnu.org/software/coreutils/manual/coreutils.html#nl-invocation
 
-  " Remove spaces before line numbers
-  " (nl's --number-width=1 would do this too):
-  " XXX TMP commented out for debugging
-"  silent! %substitute/^\s*//e
-
   " Remove empty lines
   silent! %substitute/^\s*\d\+\s\+\n//e
 
-  echo 'Line numbers added'
-
 endfunction
 
-" ----------------------------------------------
-" Generic functions
+" ==============================================================
+" Generic functions {{{1
 
 function! Trim(input_string)
   " Remove trailing spaces from a string.
@@ -418,45 +409,37 @@ function! Trim(input_string)
   return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
 endfunction
 
-" ----------------------------------------------
-" Main
+" ==============================================================
+" Main {{{1
 
-function! SaveVariables()
-  " Save variables that will be changed
-  let s:shortmessBackup=&shortmess
-  set shortmess=at
-  let s:ignoreCaseBackup=&ignorecase
-  set ignorecase
-endfunction
-
-function! RestoreVariables()
-  " Restore the variables that were changed
-  let &ignorecase=s:ignoreCaseBackup
-  let &shortmess=s:shortmessBackup
-endfunction
-
-function! Imbastardizer()
+"function! Imbastardizer()
 
   " Convert the content of the current Vim buffer.
 
-  call SaveVariables()
+  let s:shortmessBackup=&shortmess
+  set shortmess=at
+  let s:ignorecaseBackup=&ignorecase
+  set ignorecase
 
   let s:definedTags=[] " a list for the '#define' tags
+  let s:renumLine=1
 
   " Conversion steps
-  call Include()
-  call Define()
-  call ConditionalConversion()
+  "call Include()
+  "call Define()
+  "call ConditionalConversion()
   call Clean()
-  call Vim()
+  "call Vim()
   call Labels()
   call Renum()
 
   " Remove the empty lines
   silent! %s/\n$//e
 
-  call RestoreVariables()
+  " Restore the variables that were changed
+  let &ignorecase=s:ignorecaseBackup
+  let &shortmess=s:shortmessBackup
 
-endfunction
+"endfunction
 
 " vim:tw=64:ts=2:sts=2:sw=2:et
