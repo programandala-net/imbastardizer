@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.6.0+20210409T1925CEST.
+" Version 1.0.0-dev.0.6.1+20210409T2015CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -139,8 +139,8 @@ function! Include()
     let l:include=getline('.')
     let l:filenamePos=matchend(l:include,'^\s*#include\s\+')
     let l:filename=strpart(l:include,l:filenamePos)
-    call setline('.','// <<< start of included file '.l:filename)
-    call append('.','// >>> end of included file '.l:filename)
+    call setline('.','# <<< start of included file '.l:filename)
+    call append('.','# >>> end of included file '.l:filename)
     let l:filecontent=readfile(s:sourceFileDir.'/'.l:filename)
     call append('.',l:filecontent)
   endwhile
