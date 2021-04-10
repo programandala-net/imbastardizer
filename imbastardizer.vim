@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.6.1+20210409T2015CEST.
+" Version 1.0.0-dev.0.7.0+20210410T1735CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -97,7 +97,7 @@ function! DoVim(directive)
 
   endif
 
-  call SaveStep(a:directive.' executed')
+  call SaveStep(strpart(a:directive,1,len(a:directive)-1).'_directive_processed')
 
 endfunction
 
@@ -154,7 +154,7 @@ function! Include()
   "   echo l:includedFiles 'files included'
   " endif
 
-  call SaveStep('#include_executed')
+  call SaveStep('include_directive_processed')
 
 endfunction
 
@@ -256,7 +256,7 @@ function! ConditionalConversion()
 
   endwhile
 
-  call SaveStep('#ifdef_executed')
+  call SaveStep('ifdef_directive_processed')
 
 endfunction
 
@@ -286,6 +286,8 @@ function! Define()
   " There can be any number of '#define' directives, but they must be alone on
   " their own source lines (with optional indentation).
 
+  let s:definedTags=[] " a list for the '#define' tags
+
   call cursor(1,1) " Go to the top of the file.
   while search('^\s*#define\s\+','Wc')
     let l:definition=getline('.')
@@ -305,7 +307,7 @@ function! Define()
   "   echo l:tags.' #define directives'
   " endif
 
-  call SaveStep('#define_executed')
+  call SaveStep('define_directive_processed')
 
 endfunction
 
@@ -336,7 +338,8 @@ function! Labels()
   " A label is defined with the text `@label:' at the beginning
   " of a line (possibly preceded by whitespace). It can be
   " referred to (before or after) with  `@label'. Only letters
-  " A-Z, a-z digits and underscores can be used in a label name.
+  " A-Z, a-z, digits, dots and underscores can be used in a
+  " label name.
   "
   " Label references will be replaced with the correspondent
   " line number anywhere in the source, even in text strings!
@@ -344,7 +347,7 @@ function! Labels()
   " Join every label to its following line:
 
   call cursor(1,1)
-  while search('^@[0-9a-zA-Z_]\+:$','Wce')
+  while search('^@[0-9a-zA-Z_.]\+:$','Wce')
     join
   endwhile
 
@@ -358,7 +361,7 @@ function! Labels()
   call cursor(1,1)
 
   " Search for label definitions and store them into the dictionary:
-  while search('^@[0-9a-zA-Z_]\+:','w')
+  while search('^@[0-9a-zA-Z_.]\+:','w')
 
     " Store the found label into register 'l' and remove its
     " trailing colon:
@@ -385,7 +388,7 @@ function! Labels()
   endwhile
 
   " Remove all label definitions:
-  silent! %substitute/^@[0-9a-zA-Z_]\+:\s*//eig
+  silent! %substitute/^@[0-9a-zA-Z_.]\+:\s*//eig
 
   call SaveStep('label_definitions_removed')
 
@@ -484,7 +487,6 @@ endfunction
   " following line fails):
   set nofoldenable
 
-  let s:definedTags=[] " a list for the '#define' tags
   let s:renumLine=1
 
   " Counter for the saved step files
@@ -508,8 +510,8 @@ endfunction
   " Conversion steps
   call SaveStep('untouched_original')
   "call Include()
-  "call Define()
-  "call ConditionalConversion()
+  call Define()
+  call ConditionalConversion()
   call Clean()
   "call Vim()
   call Labels()
