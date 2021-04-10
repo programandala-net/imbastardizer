@@ -1,7 +1,7 @@
 # Imbastardizer
 
 <!--
-Last modified 20210408T1918+0200.
+Last modified 20210410T1306+0200.
 -->
 
 ## Description
@@ -9,7 +9,8 @@ Last modified 20210408T1918+0200.
 Imbastardizer is a source preprocessor, especially suited for old or
 limited dialects of BASIC.
 
-It's written in [Vim Script](http://www.vim.org).
+It's written in Vim Script, and can be executed on [Vim](http://www.vim.org) or
+[Neovim](http://neovim.org).
 
 - [Homepage](http://programandala.net/en.program.imbastardizer.html).
 - [Repository](http://fossil.programandala.net/imbastardizer).
@@ -31,6 +32,22 @@ approach.
 
 At the time of writing (2021-04) Imbastardizer is being rewritten to
 prepare version 1.0.0.
+
+## Installation and usage
+
+To install Imbastardizer, copy "imbastardizer.vim" to the "~/.vim" directory.
+Then the program can be executed with Vim's `runtime` command.
+
+Example of a "Makefile" rule that preprocess a BASIC source file with
+Imbastardizer:
+
+```
+src/%.bas: target/%.bas
+	@vim -e -R \
+		-c "runtime imbastardizer.vim" \
+		-c "saveas! $@|q!" $<
+
+```
 
 ## History 
 
