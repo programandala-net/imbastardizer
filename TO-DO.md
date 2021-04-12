@@ -5,7 +5,7 @@ This file is part of
 
 By Marcos Cruz (programandala.net).
 
-Last modified 20210409T1408+0200.
+Last modified 20210412T1042+0200.
 
 ## Fix
 
@@ -27,6 +27,8 @@ Last modified 20210409T1408+0200.
 - Improve the command line wrapper with optional output file, after
   SBim.
 - Save a step only if the buffer has changed.
+- Parse all directives on one single pass, making `#define`, `#previm`, `#vim`
+  and `#include` conditional.
 
 ## Add
 
