@@ -2,7 +2,7 @@
 
 " Imbastardizer
 
-" Version 1.0.0-dev.0.7.0+20210410T1735CEST.
+" Version 1.0.0-dev.0.8.0+20210418T1711CEST.
 
 " Copyright (C) 2016,2017,2021 Marcos Cruz (programandala.net)
 
@@ -347,7 +347,7 @@ function! Labels()
   " Join every label to its following line:
 
   call cursor(1,1)
-  while search('^@[0-9a-zA-Z_.]\+:$','Wce')
+  while search('^\(\s*@[0-9a-zA-Z_.]\+:\s*\)\+$','Wce')
     join
   endwhile
 
@@ -361,7 +361,11 @@ function! Labels()
   call cursor(1,1)
 
   " Search for label definitions and store them into the dictionary:
-  while search('^@[0-9a-zA-Z_.]\+:','w')
+  while search('^\s*@[0-9a-zA-Z_.]\+:\s*','w')
+
+    " Skip possible leading spaces, left by a previous label on
+    " the same code line:
+    call search('\S','c')
 
     " Store the found label into register 'l' and remove its
     " trailing colon:
@@ -387,8 +391,8 @@ function! Labels()
 
   endwhile
 
-  " Remove all label definitions:
-  silent! %substitute/^@[0-9a-zA-Z_.]\+:\s*//eig
+  " Remove leading spaces, possibly left by labels:
+  silent! %s/\s*\(.\+\)\?$/\1/e
 
   call SaveStep('label_definitions_removed')
 
