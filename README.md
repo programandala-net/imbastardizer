@@ -1,7 +1,7 @@
 # Imbastardizer
 
 <!--
-Last modified 20210410T1306+0200.
+Last modified 20230405T1500+0200.
 -->
 
 ## Description
@@ -120,7 +120,11 @@ and rewritting Imbastardizer with a new approach seemed the best
 option.
 
 In order to resume the development of Imbastardizer, its Git
-repository was converted to [Fossil](http://fossil-scm.org), but
+repository was converted to [Fossil](https://fossil-scm.org), but
 keeping [GitHub as a
 mirror](http://github.com/programandala-net/imbastardizer). The latest
 version was tagged as v0.4.2.
+
+On 2023-04-05 the repository was converted to
+[Mercurial](https://mercurial-scm.org), enabling better interaction with
+GitHub.
